@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "token-footprint-local"
+version = "0.1.0"
+description = "Local-first personal AI usage accounting and share cards"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+dependencies = []
+
+[project.scripts]
+token-footprint = "token_footprint.__main__:main"
+
+[tool.setuptools.package-data]
+token_footprint = ["report.html"]
+
+[tool.setuptools.packages.find]
+include = ["token_footprint*"]
