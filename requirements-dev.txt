@@ -1,0 +1,2 @@
+# Only needed to regenerate the fixed QR asset; never needed by application users.
+qrcodegen==1.8.0 --hash=sha256:06bf87021bc351f1c6e722ac67db8a059c4fe27bbfbca39ed7a9a2364abdd7a6

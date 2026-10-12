@@ -1,0 +1,124 @@
+<style>
+#tm-share-spec{font-family:"Segoe UI","Microsoft YaHei",sans-serif;color-scheme:light dark;--ui-ink:light-dark(#263b32,#e5eadd);--ui-dim:light-dark(#5e7265,#a9bbac);--ui-line:light-dark(#cad4c8,#4f6355);color:var(--ui-ink)}
+#tm-share-spec *{box-sizing:border-box}
+#tm-share-spec .tm-toolbar{display:flex;justify-content:center;align-items:center;flex-wrap:wrap;gap:8px;padding:12px 8px}
+#tm-share-spec .tm-toolbar label{font-size:12px;display:flex;align-items:center;gap:8px;color:var(--ui-dim)}
+#tm-share-spec select,#tm-share-spec button{font:inherit;font-size:12px;color:var(--ui-ink);background:light-dark(#edf1e9,#243b2c);border:1px solid var(--ui-line);border-radius:7px;min-height:40px;padding:8px 12px}
+#tm-share-spec .tm-stage{display:flex;align-items:center;justify-content:center;padding:20px 12px;min-height:588px}
+#tm-share-spec .tm-poster{width:min(100%,405px);line-height:0;box-shadow:0 12px 32px #10291e18;container-type:inline-size}
+#tm-share-spec .tm-poster svg,#tm-share-spec .tm-poster img{display:block;width:100%;height:auto}
+#tm-share-spec .tm-bottom{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:6px;padding:12px 8px 6px}
+#tm-share-spec .tm-tier{background:transparent;border-color:transparent;color:var(--ui-dim);display:flex;gap:7px;align-items:center;min-height:44px}
+#tm-share-spec .tm-tier[aria-pressed="true"]{border-color:var(--ui-line);background:light-dark(#e0e8dc,#2a4232);color:var(--ui-ink)}
+#tm-share-spec .tm-swatch{display:inline-block;width:12px;height:12px;border-radius:50%;border:1px solid #88888840}
+#tm-share-spec .tm-detail{text-align:center;font-size:12px;line-height:1.8;color:var(--ui-dim);padding:4px 10px;margin:0;min-height:30px}
+#tm-share-spec .tm-fine{text-align:center;font-size:11px;line-height:1.7;color:var(--ui-dim);padding:0 12px 12px;margin:0}
+@media(max-width:440px){#tm-share-spec .tm-stage{min-height:unset;padding:14px 10px}#tm-share-spec .tm-toolbar{padding:10px 0}#tm-share-spec select{font-size:16px}#tm-share-spec button{padding:7px 9px}#tm-share-spec .tm-bottom{gap:1px}}
+</style>
+<div id="tm-share-spec">
+  <div class="tm-toolbar">
+    <label>画幅<select class="tm-format" aria-label="图片画幅"><option value="portrait">3:4 · 1080 × 1440</option><option value="square">1:1 · 1080 × 1080</option></select></label>
+    <button class="tm-download cursor-interaction" type="button">生成 PNG</button>
+  </div>
+  <div class="tm-stage viz-dotted-background"><div class="tm-poster" aria-label="TokenMe 分享图预览"></div></div>
+  <div class="tm-bottom" role="group" aria-label="预览用量等级">
+    <button class="tm-tier cursor-interaction" type="button" data-tier="0" aria-pressed="true"><span class="tm-swatch" style="background:#f2eee3"></span>L1 素棉</button>
+    <button class="tm-tier cursor-interaction" type="button" data-tier="1" aria-pressed="false"><span class="tm-swatch" style="background:#617564"></span>L2 染纸</button>
+    <button class="tm-tier cursor-interaction" type="button" data-tier="2" aria-pressed="false"><span class="tm-swatch" style="background:linear-gradient(130deg,#344b61,#8faab7)"></span>L3 珠光</button>
+    <button class="tm-tier cursor-interaction" type="button" data-tier="3" aria-pressed="false"><span class="tm-swatch" style="background:linear-gradient(120deg,#b3bfc3,#e5e9e8)"></span>L4 钛银</button>
+    <button class="tm-tier cursor-interaction" type="button" data-tier="4" aria-pressed="false"><span class="tm-swatch" style="background:linear-gradient(130deg,#202923 50%,#d9bf7c 55%,#202923 70%)"></span>L5 墨金</button>
+  </div>
+  <p class="tm-detail" aria-live="polite"></p>
+  <p class="tm-fine">示例数据 · 拟定展示单位：1 I = 100万 Token · 等级规则 v0.1</p>
+</div>
+<script>
+(() => {
+ const root=document.getElementById('tm-share-spec');
+ const host=root.querySelector('.tm-poster');
+ const levels=[
+  {name:'素棉',min:1,max:10000000,sample:80000,paper:'#f2eee3',ink:'#304538',sub:'#526454',foil:'#617449',line:'#b5b9a3',shine:0.07,range:'0 < 累计 Token < 1000万'},
+  {name:'染纸',min:10000000,max:100000000,sample:28600000,paper:'#617564',ink:'#f4f0de',sub:'#e8ead9',foil:'#ece4b5',line:'#adbea6',shine:0.13,range:'1000万 ≤ 累计 Token < 1亿'},
+  {name:'珠光',min:100000000,max:1000000000,sample:286000000,paper:'#344b61',ink:'#e8eef0',sub:'#d1dde4',foil:'#b7d6d4',line:'#7794a5',shine:0.35,range:'1亿 ≤ 累计 Token < 10亿'},
+  {name:'钛银',min:1000000000,max:10000000000,sample:3200000000,paper:'#b3bfc3',ink:'#243b43',sub:'#344e55',foil:'#314d59',line:'#6f878c',shine:0.65,range:'10亿 ≤ 累计 Token < 100亿'},
+  {name:'墨金',min:10000000000,max:Infinity,sample:12800000000,paper:'#202923',ink:'#e4c78a',sub:'#cfbf9e',foil:'#d2b16a',line:'#8f7e55',shine:0.11,range:'累计 Token ≥ 100亿'}
+ ];
+ const state={tier:0,format:'portrait'};
+ const saved=window.openai?.widgetState?.privateContent;
+ if(saved&&Number.isInteger(saved.tier)&&levels[saved.tier])state.tier=saved.tier;
+ if(saved?.format==='square')state.format='square';
+ const escape=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&apos;'}[c]));
+ const artPaths=Array.from({length:29},(_,i)=>{
+   const t=i/28;
+   return `<path d="M ${-214+t*126} ${-102-t*58} C ${43+t*137} ${-300+t*60}, ${281-t*42} ${-119+t*161}, ${204-t*90} ${121+t*97} C ${57-t*176} ${290-t*86}, ${-286+t*37} ${144-t*92}, ${-214+t*126} ${-102-t*58}" opacity="${0.32+t*0.68}"/>`;
+ }).join('');
+ function formattedI(tokens){
+  const n=tokens/1000000;
+  if(n>0&&n<0.01)return '&lt;0.01';
+  const floor=Math.floor(n*100)/100;
+  return floor.toLocaleString('en-US',{maximumFractionDigits:2});
+ }
+ function raw(tokens){return tokens>=1e9?(tokens/1e9).toLocaleString('en-US',{maximumFractionDigits:2})+'B TOKENS':tokens>=1e6?(tokens/1e6).toLocaleString('en-US',{maximumFractionDigits:2})+'M TOKENS':tokens.toLocaleString('en-US')+' TOKENS';}
+ let exportURL=null;
+ function render(){
+  if(exportURL){URL.revokeObjectURL(exportURL);exportURL=null;}
+  const l=levels[state.tier],square=state.format==='square',h=square?1080:1440;
+  const cy=square?418:531,artScale=square?0.76:1.04,labelY=square?660:872,numY=square?797:1038,rawY=square?851:1098;
+  const ruleY=square?892:1154,metricY=square?950:1230,footerY=square?1008:1350;
+  const value=formattedI(l.sample),font=value.length>6?156:184;
+  host.innerHTML=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 ${h}" width="1080" height="${h}" role="img" aria-label="${escape('林的 AI 足迹，L'+(state.tier+1)+' '+l.name+'，累计 '+l.sample.toLocaleString('zh-CN')+' Token；示例数据')}" style="font-family:Segoe UI,Microsoft YaHei,sans-serif">
+   <defs>
+    <linearGradient id="tm-spec-light" x1="0" y1="0" x2="1" y2="0.85"><stop offset="0" stop-color="#ffffff" stop-opacity="0"/><stop offset=".38" stop-color="#ffffff" stop-opacity=".75"/><stop offset=".54" stop-color="#ffffff" stop-opacity="0"/><stop offset=".86" stop-color="#ffffff" stop-opacity=".36"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/></linearGradient>
+    <linearGradient id="tm-spec-foil" x1="0" y1="0" x2="1" y2=".7"><stop offset="0" stop-color="${l.foil}"/><stop offset=".43" stop-color="${state.tier===4?'#f3e1b5':l.ink}"/><stop offset=".64" stop-color="${l.foil}"/><stop offset="1" stop-color="${l.ink}"/></linearGradient>
+    <pattern id="tm-spec-grain" width="6" height="6" patternUnits="userSpaceOnUse"><path d="M 1 0 L 1 6" stroke="#ffffff" stroke-opacity=".07" stroke-width=".8"/><circle cx="4" cy="3" r=".55" fill="#121e15" opacity=".1"/></pattern>
+   </defs>
+   <rect width="1080" height="${h}" fill="${l.paper}"/>
+   <rect width="1080" height="${h}" fill="url(#tm-spec-grain)"/>
+   <rect width="1080" height="${h}" fill="url(#tm-spec-light)" opacity="${l.shine}"/>
+   <path d="M 0 ${h-3} H 1080" stroke="${l.foil}" stroke-width="6" opacity=".8"/>
+   <text x="72" y="112" fill="${l.ink}" font-size="44" font-weight="500" letter-spacing="-1.5">TokenMe</text>
+   <text x="1008" y="112" text-anchor="end" fill="${l.sub}" font-size="40" letter-spacing="1">2026.10</text>
+   <text x="72" y="207" fill="${l.ink}" font-size="53" font-weight="400">林</text>
+   <text x="1008" y="204" text-anchor="end" fill="${l.sub}" font-size="42">L${state.tier+1} · ${l.name}</text>
+   <g transform="translate(540 ${cy}) scale(${artScale})" stroke="url(#tm-spec-foil)" stroke-width="1.6" fill="none">${artPaths}</g>
+   <text x="540" y="${labelY}" text-anchor="middle" fill="${l.sub}" font-size="42" letter-spacing="8">累计 I 量</text>
+   <text x="540" y="${numY}" text-anchor="middle" fill="${state.tier===4?'url(#tm-spec-foil)':l.ink}" font-size="${square?font*.83:font}" font-weight="300" letter-spacing="-7">${value}<tspan dx="12" font-size="60" letter-spacing="0">I</tspan></text>
+   <text x="540" y="${rawY}" text-anchor="middle" fill="${l.sub}" font-size="40" letter-spacing="2">${raw(l.sample)}</text>
+   <path d="M 72 ${ruleY} H 1008" stroke="${l.line}" stroke-width="1.5"/>
+   <text x="72" y="${metricY}" fill="${l.ink}" font-size="44">12<tspan dx="15" fill="${l.sub}" font-size="40">活跃日</tspan></text>
+   <text x="1008" y="${metricY}" text-anchor="end" fill="${l.sub}" font-size="40">Codex · WorkBuddy</text>
+   <text x="72" y="${footerY}" fill="${l.sub}" font-size="40">本地记录 · 含缓存</text>
+   <text x="1008" y="${footerY}" text-anchor="end" fill="${l.sub}" font-size="40">2026.07—10</text>
+  </svg>`;
+  root.querySelector('.tm-format').value=state.format;
+  root.querySelectorAll('.tm-tier').forEach(b=>b.setAttribute('aria-pressed',String(Number(b.dataset.tier)===state.tier)));
+  root.querySelector('.tm-detail').textContent=`L${state.tier+1} ${l.name} · ${l.range}`;
+ }
+ function save(){if(window.openai?.setWidgetState)window.openai.setWidgetState({modelContent:{tier:state.tier+1,material:levels[state.tier].name,format:state.format},privateContent:{...state}}).catch(()=>{});}
+ root.querySelectorAll('.tm-tier').forEach(button=>button.addEventListener('click',()=>{state.tier=Number(button.dataset.tier);render();save();}));
+ root.querySelector('.tm-format').addEventListener('change',event=>{state.format=event.target.value;render();save();});
+ root.querySelector('.tm-download').addEventListener('click',async()=>{
+  const button=root.querySelector('.tm-download'),label=button.textContent;button.disabled=true;button.textContent='生成中…';
+  let sourceURL;
+  try{
+   if(!host.querySelector('svg'))render();
+   const exportFormat=state.format,exportTier=state.tier;
+   const svg=host.querySelector('svg').cloneNode(true);
+   const source=new XMLSerializer().serializeToString(svg);
+   sourceURL=URL.createObjectURL(new Blob([source],{type:'image/svg+xml;charset=utf-8'}));
+   const image=new Image();
+   await new Promise((resolve,reject)=>{image.onload=resolve;image.onerror=reject;image.src=sourceURL;});
+   const canvas=document.createElement('canvas');canvas.width=1080;canvas.height=exportFormat==='square'?1080:1440;
+   const ctx=canvas.getContext('2d');if(!ctx)throw new Error('Canvas unavailable');ctx.drawImage(image,0,0);
+   const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/png'));if(!blob)throw new Error('PNG unavailable');
+   if(state.format!==exportFormat||state.tier!==exportTier)return;
+   exportURL=URL.createObjectURL(blob);
+   const preview=document.createElement('img');preview.src=exportURL;preview.width=canvas.width;preview.height=canvas.height;preview.alt=`${canvas.width} × ${canvas.height} PNG · L${exportTier+1} ${levels[exportTier].name} · 示例数据`;
+   host.replaceChildren(preview);
+   root.querySelector('.tm-detail').textContent=`已生成 ${canvas.width} × ${canvas.height} PNG · 可右键或长按保存`;
+  }catch(error){root.querySelector('.tm-detail').textContent='此预览环境未能导出图片。';}
+  finally{if(sourceURL)URL.revokeObjectURL(sourceURL);button.disabled=false;button.textContent=label;}
+ });
+ window.addEventListener('openai:set_globals',event=>{const s=event.detail?.globals?.widgetState?.privateContent;if(s&&Number.isInteger(s.tier)&&levels[s.tier]){state.tier=s.tier;state.format=s.format==='square'?'square':'portrait';render();}});
+ render();
+})();
+</script>

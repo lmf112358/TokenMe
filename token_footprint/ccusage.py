@@ -16,12 +16,18 @@ def import_ccusage(path, offset):
     result = ScanResult("ccusage_import", files=1, available=True)
     seen = set()
     for row in data["daily"]:
+        if not isinstance(row, dict):
+            raise UsageError("ccusage daily row must be an object")
         day = row.get("period") or row.get("date")
         if not isinstance(day, str) or not re.fullmatch(r"\d{4}-\d{2}-\d{2}", day):
             raise UsageError("ccusage import needs daily YYYY-MM-DD periods")
         observed = datetime.strptime(day, "%Y-%m-%d").replace(tzinfo=tz).isoformat()
         agents = row.get("agents") or [row]
+        if not isinstance(agents, list):
+            raise UsageError("ccusage agents must be a list")
         for agent in agents:
+            if not isinstance(agent, dict):
+                raise UsageError("ccusage agent row must be an object")
             source = agent.get("agent")
             if not isinstance(source, str) or source == "all" or not re.fullmatch(r"[a-z][a-z0-9_-]{0,63}", source):
                 raise UsageError("ccusage JSON must contain per-agent rows; use --by-agent")

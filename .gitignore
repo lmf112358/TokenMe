@@ -6,3 +6,13 @@ outputs/
 dist/
 build/
 .venv/
+*.sqlite3
+*.sqlite3-*
+*.db
+.env
+.env.*
+report-data.json
+records.jsonl
+summary.json
+account-usage.json
+TokenMe-cumulative-*.png

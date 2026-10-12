@@ -24,7 +24,16 @@
 | [WorkBuddy Token Tracker](https://github.com/abc1317679842-ui/workbuddy-token-tracker) | MIT；针对 WorkBuddy 的较完整统计、hook 与通知体系 | 项目规模较小、更新频繁；通知偏 Windows；包含当前任务不需要的价格、hook、网络功能；仓库提示过同名 npm 包风险，未独立核验 | 仅参考公开的覆盖边界线索；依据本机字段独立实现小型只读 trace 适配器 |
 | [TokenRank](https://github.com/tokenrank/tokenrank) | MIT；公开身份、排行榜、上传后端 | 完整 Web 栈比当前本地验证范围大；不解决所有个人平台原始数据可得性 | 暂不引入 |
 
-当前工程没有打包或改编第三方实现代码，因此无第三方运行时版本锁定项；MIT 为本工程许可证。未来采用第三方库时，必须补充固定版本或 commit、许可证文本、必要的安全审查与平台验证。
+应用运行仍未打包第三方实现代码，MIT 为本工程许可证。SQLite 使用 Python 标准库，避免维护自制事务存储。二维码复用开发工具生成固定素材，运行时只读取矩阵并由 Canvas 绘制，见下文。
+
+### 二维码复用（2026-10-12）
+
+- 工具：[Nayuki QR Code generator](https://www.nayuki.io/page/qr-code-generator-library)，[PyPI qrcodegen 1.8.0](https://pypi.org/project/qrcodegen/1.8.0/)，MIT。
+- 适配：纯 Python、单文件，无传递依赖，可生成四级纠错的模块矩阵，适合固定公开链接。无需运行时网络、图片服务或整个 UI 组件库。
+- 固定 wheel SHA-256：`06bf87021bc351f1c6e722ac67db8a059c4fe27bbfbca39ed7a9a2364abdd7a6`，开发 requirements 以 hash 固定。官方 1.8.0 发布较早；成熟编码格式无需追逐新版本，未来改链路时复核维护与安全状态。
+- 审查：下载 wheel 后读取源码许可、编码入口及 AST 导入/调用集合；仅标准库数学、序列、正则等，无文件/网络/进程执行。没有声称完成全面安全审计或确认不存在漏洞。
+- 集成：`scripts/generate_qr.py` 生成 `share-qr.json`，矩阵只包含固定公开仓库 URL。库源码不拷入产品，用户安装不引入依赖；未来可替换生成器。
+- 独立验证：本地测试工具 zxing-cpp 2.3.0（Apache-2.0）解码实际 PNG 和模拟压缩图；Pillow 11.3.0（MIT-CMU，按 wheel 元数据核验）仅做验证图像处理，均安装在 Git 忽略目录，不随应用分发。
 
 ccusage 桥接遵循 [2026-10-10 查阅的 unified daily JSON 文档](https://ccusage.com/guide/json-output)：采用 per-agent 日桶，inputTokens 不含 cacheReadTokens / cacheCreationTokens，总量关系必须逐条吻合。该合同以合成样本测试，不代表已验证所有 ccusage 版本；不接受未知口径时自动猜测。
 

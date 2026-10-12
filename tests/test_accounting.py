@@ -153,6 +153,21 @@ class AccountingTests(unittest.TestCase):
         with self.assertRaises(UsageError):
             sanitize_account_usage({"dailyUsageBuckets": [bucket, {**bucket, "tokens": 124}]})
 
+    def test_malformed_account_shapes_are_rejected(self):
+        for data in ({"summary": [1]}, {"dailyUsageBuckets": [12]}):
+            with self.assertRaises(UsageError):
+                sanitize_account_usage(data)
+
+    def test_malformed_codex_info_does_not_abort_scan(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            invalid = {"type": "event_msg", "payload": {"type": "token_count", "info": [1]}}
+            valid = event("2026-10-01T00:00:00Z", counter(100, 10), counter(100, 10))
+            write_codex(root, "session.jsonl", [invalid, valid])
+            result = codex_scan([root])
+        self.assertEqual(sum(r.total_tokens for r in result.records), 110)
+        self.assertEqual(result.diagnostics["invalid_usage_records"], 1)
+
     def test_ccusage_unified_input_is_exclusive(self):
         data = {"daily": [{"period": "2026-10-01", "agents": [{"agent": "qwen", "inputTokens": 500,
                 "outputTokens": 100, "cacheReadTokens": 30, "cacheCreationTokens": 20, "totalTokens": 650}]}]}
@@ -197,6 +212,8 @@ class AccountingTests(unittest.TestCase):
             data = json.loads((out / "report-data.json").read_text(encoding="utf-8"))
             self.assertNotIn('</script><script>alert', report)
             self.assertNotIn("PRIVATE PROMPT", report)
+            self.assertNotIn("__SHARE_CARD_SCRIPT__", report)
+            self.assertIn("TokenMeCard", report)
             self.assertFalse(data["source_status"][0]["available"])
             self.assertTrue(data["unconnected"])
             self.assertEqual(data["views"]["all"]["total_tokens"], 120)

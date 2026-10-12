@@ -60,6 +60,10 @@ class UsageRecord:
     granularity: str = "request_delta"
 
     def __post_init__(self):
+        for name in ("record_id", "source", "provider", "model"):
+            value = getattr(self, name)
+            if not isinstance(value, str) or not value or len(value) > 512:
+                raise UsageError("invalid record metadata: " + name)
         timestamp(self.occurred_at)
         for name in ("input_tokens", "output_tokens"):
             count(getattr(self, name), name)

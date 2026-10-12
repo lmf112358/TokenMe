@@ -62,6 +62,9 @@ def codex_scan(roots):
                         if obj.get("type") != "event_msg" or payload.get("type") != "token_count":
                             continue
                         info = payload.get("info") or {}
+                        if not isinstance(info, dict):
+                            result.diagnostics["invalid_usage_records"] += 1
+                            continue
                         current = info.get("total_token_usage")
                         last = info.get("last_token_usage")
                         if not isinstance(current, dict):

@@ -18,6 +18,8 @@ def sanitize_account_usage(data):
     if not isinstance(data, dict):
         raise UsageError("account result must be an object")
     summary = data.get("summary") or {}
+    if not isinstance(summary, dict):
+        raise UsageError("account summary must be an object")
     clean_summary = {k: count(summary.get(k), k, True) for k in SUMMARY_FIELDS}
     raw_buckets = data.get("dailyUsageBuckets")
     daily = None
@@ -26,6 +28,8 @@ def sanitize_account_usage(data):
             raise UsageError("daily buckets must be a list or null")
         buckets = {}
         for raw in raw_buckets:
+            if not isinstance(raw, dict):
+                raise UsageError("account daily bucket must be an object")
             day = date.fromisoformat(raw["startDate"]).isoformat()
             tokens = count(raw["tokens"])
             if day in buckets and buckets[day] != tokens:
