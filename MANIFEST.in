@@ -2,4 +2,4 @@ include LICENSE README.md CHANGELOG.md CONTRIBUTING.md SECURITY.md
 recursive-include docs *.md *.html
 include docs/assets/share-demo-l1.png
 recursive-include tests *.py *.cjs
-include scripts/verify_wheel.py scripts/generate_qr.py requirements-dev.txt
+include scripts/verify_wheel.py scripts/generate_qr.py scripts/bootstrap.py requirements-dev.txt

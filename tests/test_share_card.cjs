@@ -66,3 +66,25 @@ test('generation month respects report timezone at month boundaries', () => {
   assert.equal(card.monthAt('2026-10-01T01:00:00Z', 'UTC-08:00'), '2026.09');
   assert.equal(card.monthAt('2026-09-30T17:00:00Z', 'UTC+08:00'), '2026.10');
 });
+
+test('monthly souvenir uses monthly amount and cumulative material, explicitly labeled', () => {
+  const b = bundle();
+  b.views['2026-10'] = {...b.views.all, total_tokens: 100000000, active_days: 1,
+    first_observed_day: '2026-10-01', last_observed_day: '2026-10-01'};
+  const model = card.modelFor(b, 'Demo', '2026-10');
+  assert.equal(model.total, 100000000);
+  assert.equal(model.value, '100');
+  assert.equal(model.level.number, 4);
+  assert.equal(model.gradeLabel, '累计 L4 · 钛银');
+  assert.equal(model.label, '2026.10 I 量');
+  assert.equal(model.activeDays, 1);
+  assert.equal(model.range, '2026.10');
+  assert.equal(card.modelFor(b).total, 1000000000);
+});
+
+test('empty or unavailable monthly views do not borrow cumulative or account usage', () => {
+  const b = bundle();
+  b.views['2026-10'].total_tokens = 0;
+  assert.equal(card.modelFor(b, '', '2026-10').available, false);
+  assert.equal(card.modelFor(b, '', '2026-11').available, false);
+});

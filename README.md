@@ -2,7 +2,17 @@
 
 把真实的 AI 使用记录，变成值得收藏与分享的一张图。
 
-**v0.1.0 · 本地保存 · 离线报告 · 零第三方运行依赖**
+**v0.2 开发预览 · 本地保存 · 离线报告 · 零第三方运行依赖**
+
+本分支版本为 `0.2.0.dev1`，稳定版仍为 [v0.1.0](https://github.com/lmf112358/TokenMe/releases/tag/v0.1.0)。v0.2 增加 Agent 安装与 JSON 调用、可解释的记录变化、历史快照、完整备份和月度纪念图。参阅 [v0.2 范围与立意](docs/v0.2.md)。
+
+当前开发检出可一条命令安装并生成报告（需要 Python 3.10+）：
+
+```shell
+python scripts/bootstrap.py --run --open
+```
+
+Agent 接入说明见 [agent-quickstart](docs/agent-quickstart.md)。安装器使用隔离环境；`run` 的报告固定保存在 `~/.tokenme/report`。以下原有 `scan` 流程继续兼容，默认输出仍是工作目录的 `.local/report`。
 
 支持 Codex、WorkBuddy 本地记录和 ccusage 导出桥接。累计 I 量、五种材质、个人使用节奏纹样、两种画幅与可关闭的传播二维码已经可用。低用量也有完整的设计。
 

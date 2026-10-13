@@ -12,7 +12,7 @@
 <style>.chart{overflow-x:auto;overflow-y:hidden}.hero-footer{flex-wrap:wrap;gap:24px}.source-row .row{flex-wrap:wrap}.share-controls .check{display:flex;align-items:center;gap:9px}.share-controls .check input{width:auto;accent-color:var(--ink)}.share-controls a{color:var(--ink)}.ledger-note{margin-top:12px;font-size:12px}.share-controls details{margin-top:0}button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:3px solid #8ba74b;outline-offset:3px}</style>
 </head>
 <body><main>
-<nav><div class="brand"><span></span>TokenMe</div><div class="meta">本地优先 · 记录可追溯 · v0.1</div></nav>
+<nav><div class="brand"><span></span>TokenMe</div><div class="meta">本地优先 · 协作档案 · v0.2 预览</div></nav>
 <header><div><div class="eyebrow">YOUR AI ACTIVITY, MADE VISIBLE</div><h1>我的 AI 足迹</h1><p>把每一次与 AI 的协作，留成看得见的记录。</p></div><div><label for="period">本地明细的统计周期</label><br><select id="period" style="margin-top:8px"></select></div></header>
 <div class="grid">
 <section class="hero"><div class="label">已记录 Token · 本地明细</div><div class="big" id="total">—</div><div class="exact" id="exact"></div><div class="hero-footer"><div><strong id="days">—</strong><span>有记录的活跃天数</span></div><div><strong id="source-count">—</strong><span>有记录的工具</span></div><div><strong id="period-label">—</strong><span id="timezone"></span></div></div></section>
@@ -22,17 +22,23 @@
 <div class="grid section"><section class="box"><div class="row"><h2>使用节奏</h2><span class="meta" id="chart-caption"></span></div><div class="chart" id="chart"></div><div class="chart-label"><span id="chart-start"></span><span id="chart-end"></span></div><p style="font-size:11px;margin-top:20px">无记录日不代表没有使用；日志保留、其他设备和中断任务都可能影响覆盖。</p></section><section class="box"><h2>工具分布</h2><div id="sources"></div></section></div>
 <div class="notice"><span class="formula">总量 = 输入（含缓存）+ 输出（含推理）</span><br>官方账号活动与本地明细可能重叠，当前分别展示。这里的数字表示使用量，不代表费用、算力等价或能力评分。</div>
 <p class="ledger-note" id="history-note"></p>
+<div class="grid section">
+<section class="box"><h2>记录的变化</h2><p id="change-summary"></p><p class="meta">补录旧日志与修订也会改变总量，这里不等同于今天的使用量。</p></section>
+<section class="box"><h2>本次采集来源</h2><div id="coverage"></div><p class="meta">本地记录可追溯，尚未经服务商认证。用量不直接换算成信用分。</p></section>
+</div>
+<details><summary id="timeline-label">我的历史快照</summary><p>记录有变化时保存；重复扫描不重复创建。展示最近 50 次变化。首次快照建立比较起点。</p><div style="overflow-x:auto"><table style="width:100%;text-align:left;border-spacing:0 12px"><thead><tr><th>保存时间</th><th>累计 I 量</th><th>Token 净变化</th><th>有记录日</th></tr></thead><tbody id="timeline"></tbody></table></div></details>
 <section class="share" aria-labelledby="share-title">
 <h2 id="share-title" style="font-size:22px;margin:0">你的 AI 足迹，值得留一张。</h2>
-<p style="font-size:12px">按全部已记录历史生成，与你上方选择的月份独立。图片只在本地生成。</p>
+<p style="font-size:12px">留下累计档案，或保存一张月度纪念。图片只在本地生成。</p>
 <div class="share-layout">
   <div class="share-controls">
     <label for="nickname">昵称（可选）<input id="nickname" placeholder="我的 AI 足迹" maxlength="24" autocomplete="off"></label>
     <label for="card-format">图片尺寸<select id="card-format"><option value="portrait">竖版 · 1080 × 1440</option><option value="square">方版 · 1080 × 1080</option></select></label>
+    <label for="share-period">分享内容<select id="share-period"></select></label>
     <label class="check"><input id="include-qr" type="checkbox" checked>附上「生成我的」二维码</label>
     <div class="meta">二维码仅指向 <a href="https://github.com/lmf112358/TokenMe" target="_blank" rel="noopener noreferrer">TokenMe 项目入口</a>，不携带个人数据。</div>
     <div><p class="share-status" id="share-grade"></p><div class="meta" id="share-total"></div></div>
-    <div class="share-rule">1 I = 100万 Token。材质由累计用量决定；原生 Token 包含缓存，不代表能力评分。仅覆盖已记录的历史。</div>
+    <div class="share-rule">1 I = 100万 Token。月度图展示当月用量，材质仍由累计记录决定。仅覆盖已记录的历史，不代表能力或信用评分。</div>
     <details><summary>五种材质，属于每一种使用节奏</summary><p>素棉 &lt; 1000万 · 染纸 ≥ 1000万<br>珠光 ≥ 1亿 · 钛银 ≥ 10亿 · 墨金 ≥ 100亿</p><p>没有有效记录时暂不评级。等级不按月清零；记录纠错后会重新计算。</p></details>
     <button class="primary" id="export-card" disabled>保存分享图 PNG</button>
     <div id="feedback" aria-live="polite"></div>
@@ -63,22 +69,30 @@ function render(){const view=data.views[$('period').value];$('total').textConten
 if(data.account){const a=data.account,n=a.summary.lifetimeTokens;$('account-total').textContent=compact(n);$('account-exact').textContent=fmt(n)+(n==null?'':' tokens · 累计活动');$('account-tag').textContent='官方接口返回';const buckets=a.dailyUsageBuckets;$('account-note').textContent=`${buckets==null?'未返回每日记录':`返回 ${buckets.length} 个每日记录`}。此累计值不随左侧月份变化，不与本地明细叠加；具体产品覆盖及日界线仍待确认。`}
 for(const item of data.unconnected){const s=document.createElement('span');s.textContent=item;$('unconnected').append(s)}$('diagnostics').textContent=JSON.stringify({latest_scan:data.source_status,history:data.history},null,2);$('generated').textContent='本地生成于 '+new Date(data.generated_at).toLocaleString('zh-CN');$('period').addEventListener('change',render);render();
 $('history-note').textContent=data.history?.enabled?`已从本地历史库生成 · ${fmt(data.history.records)} 条记录 · 清理原日志不会移除已保存记录。${data.history.mode==='report'?'本次未扫描客户端。':''}`:'本次为临时扫描，未保存到历史库。';
+const signed=n=>(n>0?'+':'')+fmt(n), h=data.history||{};
+$('change-summary').textContent=h.added_tokens!=null?`新增 ${fmt(h.added)} 条 / ${fmt(h.added_tokens)} Token；修订 ${fmt(h.updated)} 条 / ${signed(h.revised_tokens)} Token；净变化 ${signed(h.net_tokens)} Token。重复记录 ${fmt(h.unchanged)} 条，旧快照忽略 ${fmt(h.older_ignored)} 条。${h.snapshot_created?'已保存新快照。':'记录未变，保留原快照。'}`:h.mode==='report'?'仅用已保存记录重建，本次未采集或创建快照。':'本次未写入历史库，暂无可比较的入库变化。';
+for(const source of data.source_status||[]){const p=document.createElement('p');p.textContent=`${names[source.source]||source.source} · ${source.available?(source.records?'读取 '+fmt(source.records)+' 条':'找到目录，暂无有效记录'):'未找到目录'} · ${fmt(source.files)} 个文件`; $('coverage').append(p)}
+if(!(data.source_status||[]).length)$('coverage').textContent='本次未运行客户端采集；来源范围以已保存记录为准。';
+const snapshots=data.snapshots||[];$('timeline-label').textContent=`我的历史快照 · ${snapshots.length} 次${snapshots.length===50?'（最近）':''}`;
+for(const snapshot of snapshots){const tr=document.createElement('tr');for(const value of [new Date(snapshot.created_at).toLocaleString('zh-CN'),TokenMeCard.formatI(snapshot.summary.total_tokens),snapshot.since_previous_tokens==null?'建立起点':signed(snapshot.since_previous_tokens),fmt(snapshot.summary.active_days)]){const td=document.createElement('td');td.textContent=value;tr.append(td)}$('timeline').append(tr)}
+for(const key of Object.keys(data.views).sort().reverse()){const option=document.createElement('option');option.value=key;option.textContent=key==='all'?'累计档案':key+' · 月度纪念';$('share-period').append(option)}$('share-period').value='all';
 function refreshShare(){
   $('feedback').textContent='';
-  const model=TokenMeCard.modelFor(data,$('nickname').value);
+  const model=TokenMeCard.modelFor(data,$('nickname').value,$('share-period').value);
   $('export-card').disabled=!model.available;
   $('card-preview').hidden=!model.available;$('share-empty').hidden=model.available;
   if(!model.available){$('share-empty').textContent=model.message;$('share-grade').textContent='待记录';$('share-total').textContent='';return;}
   try{
     TokenMeCard.draw($('card'),model,$('card-format').value,{qr:$('include-qr').checked?data.share:null});
     $('card-preview').src=$('card').toDataURL('image/png');
-    $('card-preview').alt=`累计 ${fmt(model.total)} Token，L${model.level.number} ${model.level.name}，${$('card').width} × ${$('card').height} 分享图`;
-    $('share-grade').textContent=`L${model.level.number} · ${model.level.name}`;
+    $('card-preview').alt=`${model.scope==='all'?'累计':model.scope} ${fmt(model.total)} Token，累计 L${model.level.number} ${model.level.name}，${$('card').width} × ${$('card').height} 分享图`;
+    $('share-grade').textContent=model.gradeLabel;
     $('share-total').textContent=`${model.value} I · ${fmt(model.total)} Token · ${model.range}`;
   }catch(error){$('export-card').disabled=true;$('card-preview').hidden=true;$('share-empty').hidden=false;$('share-empty').textContent='图片生成失败，请使用支持 Canvas 的浏览器。';}
 }
 $('nickname').addEventListener('input',refreshShare);
 $('card-format').addEventListener('change',refreshShare);
+$('share-period').addEventListener('change',refreshShare);
 $('include-qr').addEventListener('change',refreshShare);
 $('export-card').addEventListener('click',()=>{
   if($('export-card').disabled)return;
@@ -86,7 +100,8 @@ $('export-card').addEventListener('click',()=>{
     // Freeze the exact preview pixels, dimensions and filename at click time.
     const snapshot=document.createElement('canvas');snapshot.width=$('card').width;snapshot.height=$('card').height;
     snapshot.getContext('2d').drawImage($('card'),0,0);
-    const filename=`TokenMe-cumulative-${snapshot.width}x${snapshot.height}.png`;
+    const scope=$('share-period').value==='all'?'cumulative':$('share-period').value;
+    const filename=`TokenMe-${scope}-${snapshot.width}x${snapshot.height}.png`;
     snapshot.toBlob(blob=>{
       if(!blob){$('feedback').textContent='图片生成失败，请重试。';return;}
       const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=filename;a.click();

@@ -3,7 +3,6 @@ from __future__ import annotations
 import argparse
 from datetime import datetime, timezone
 import json
-import os
 from pathlib import Path
 import sys
 import sqlite3
@@ -13,7 +12,9 @@ from .account import read_account_usage, sanitize_account_usage
 from .adapters import codex_scan, workbuddy_scan
 from .ccusage import import_ccusage
 from .model import UsageError, aggregate, utc_offset
-from .history import import_records, merge_history, read_history
+from .history import import_records, merge_history, read_history, read_timeline, backup_history
+from .discovery import data_directory, doctor, source_roots
+from . import __version__
 
 
 def save_json(path, value):
@@ -21,17 +22,24 @@ def save_json(path, value):
 
 
 def main(argv=None):
-    parser = argparse.ArgumentParser(description="TokenMe · 本地 AI 用量档案")
-    parser.add_argument("--version", action="version", version="TokenMe 0.1.0")
+    argv = sys.argv[1:] if argv is None else argv
+    class CLIParser(argparse.ArgumentParser):
+        def error(self, message):
+            if "--json" in argv:
+                print(json.dumps({"schema_version": "0.2", "ok": False, "error": {"code": "invalid_arguments", "message": "Invalid arguments; consult --help."}}))
+                raise SystemExit(2)
+            super().error(message)
+    parser = CLIParser(description="TokenMe · 本地 AI 协作档案")
+    parser.add_argument("--version", action="version", version="TokenMe " + __version__)
     sub = parser.add_subparsers(dest="command", required=True)
-    scan = sub.add_parser("scan", help="读取指定来源并生成本地报告，不上传")
+    scan = sub.add_parser("scan", aliases=["run"], help="采集并生成报告；run 使用固定用户数据目录")
     scan.add_argument("--home", type=Path, default=Path.home(), help="用户目录；可用沙箱样本目录")
     scan.add_argument("--codex-root", type=Path, help="Codex 数据目录（内含 sessions）")
     scan.add_argument("--workbuddy-root", type=Path, help="WorkBuddy 数据目录（内含 traces）")
     scan.add_argument("--sources", default="codex,workbuddy", help="codex,workbuddy 或 none")
     scan.add_argument("--offset", default="+08:00", help="本地日志日界线 UTC 偏移，默认 +08:00")
     scan.add_argument("--month", help="主视图月份 YYYY-MM，省略则全部本地历史")
-    scan.add_argument("--out", type=Path, default=Path(".local/report"))
+    scan.add_argument("--out", type=Path)
     scan.add_argument("--account-file", type=Path, help="导入 account/usage/read 的本地结果；仅保留白名单字段")
     scan.add_argument("--ccusage", type=Path, help="导入已有 ccusage daily --by-agent --json 文件")
     scan.add_argument("--store", type=Path, help="历史库；默认输出目录下 history.sqlite3")
@@ -51,16 +59,44 @@ def main(argv=None):
     account = sub.add_parser("account", help="通过已登录的 Codex 客户端查询官方账号活动（联网）")
     account.add_argument("--codex-bin", required=True, help="已安装 codex 可执行文件路径；不接受 shell 脚本")
     account.add_argument("--out", type=Path, default=Path(".local/account-usage.json"))
+    check = sub.add_parser("doctor", help="检查运行环境和支持的来源目录，不读取日志正文")
+    check.add_argument("--home", type=Path, default=Path.home())
+    check.add_argument("--codex-root", type=Path)
+    check.add_argument("--workbuddy-root", type=Path)
+    timeline = sub.add_parser("timeline", help="读取最近 50 个有变化的历史快照")
+    timeline.add_argument("--store", type=Path, default=data_directory() / "report/history.sqlite3")
+    backup = sub.add_parser("backup", help="备份完整历史库和快照，不覆盖已有文件")
+    backup.add_argument("--store", type=Path, default=data_directory() / "report/history.sqlite3")
+    backup.add_argument("--out", type=Path, required=True)
+    for command in (scan, report, export, account, check, timeline, backup):
+        command.add_argument("--json", action="store_true", help="返回稳定 JSON 协议，含 ok、schema_version 和 data/error")
     args = parser.parse_args(argv)
+    operation = args.command
+    if operation in ("scan", "run"):
+        args.out = args.out or (data_directory() / "report" if operation == "run" else Path(".local/report"))
+        args.command = "scan"
+    def reply(value):
+        output = {"schema_version": "0.2", "ok": True, "command": operation, "data": value} if args.json else value
+        print(json.dumps(output, ensure_ascii=False))
     try:
+        if args.command == "doctor":
+            reply(doctor(args.home, args.codex_root, args.workbuddy_root))
+            return 0
+        if args.command == "timeline":
+            reply({"snapshots": read_timeline(args.store)})
+            return 0
+        if args.command == "backup":
+            backup_history(args.store, args.out)
+            reply({"backup": str(args.out.resolve())})
+            return 0
         if args.command == "account":
             if Path(args.codex_bin).suffix.lower() in (".ps1", ".cmd", ".bat", ".sh"):
                 raise UsageError("pass the native codex executable, not a shell wrapper")
             data = read_account_usage(args.codex_bin)
             args.out.parent.mkdir(parents=True, exist_ok=True)
             save_json(args.out, data)
-            print(json.dumps({"saved": str(args.out), "summary": data["summary"],
-                              "daily_buckets": len(data["dailyUsageBuckets"] or [])}, ensure_ascii=False))
+            reply({"saved": str(args.out), "summary": data["summary"],
+                   "daily_buckets": len(data["dailyUsageBuckets"] or [])})
             return 0
         if args.command == "export":
             records = read_history(args.store)
@@ -70,7 +106,7 @@ def main(argv=None):
             with args.out.open("w", encoding="utf-8") as stream:
                 for record in records:
                     stream.write(json.dumps(record.to_dict(), ensure_ascii=False) + "\n")
-            print(json.dumps({"exported_records": len(records), "file": str(args.out)}, ensure_ascii=False))
+            reply({"exported_records": len(records), "file": str(args.out)})
             return 0
         utc_offset(args.offset)
         aggregate([], offset=args.offset, month=args.month)  # Validate before writing history.
@@ -81,12 +117,12 @@ def main(argv=None):
         if not sources <= {"codex", "workbuddy", "none"} or ("none" in sources and len(sources) > 1):
             raise UsageError("sources must be codex,workbuddy or none")
         results = []
+        roots = source_roots(args.home, args.codex_root, args.workbuddy_root) if args.command == "scan" else {}
         if "codex" in sources:
-            default_root = Path(os.environ.get("CODEX_HOME") or args.home / ".codex") if args.home == Path.home() else args.home / ".codex"
-            root = args.codex_root or default_root
+            root = roots["codex"]
             results.append(codex_scan([root / "sessions", root / "archived_sessions"]))
         if "workbuddy" in sources:
-            root = args.workbuddy_root or args.home / ".workbuddy"
+            root = roots["workbuddy"]
             results.append(workbuddy_scan(root / "traces"))
         if args.command == "scan" and args.ccusage:
             imported = import_ccusage(args.ccusage, args.offset)
@@ -126,7 +162,7 @@ def main(argv=None):
                 records = list({r.record_id: r for r in records}.values())
                 history.update(enabled=False, records=len(records))
             else:
-                records, stats = merge_history(args.store or args.out / "history.sqlite3", records, offset=args.offset)
+                records, stats = merge_history(store, records, offset=args.offset, source_status=[r.status() for r in results])
                 history.update(stats)
         selected = aggregate(records, offset=args.offset, month=args.month)
         # Every month is generated from event timestamps, not by redistributing account buckets.
@@ -136,11 +172,12 @@ def main(argv=None):
         if args.month and args.month not in views:
             views[args.month] = selected
         share = json.loads((Path(__file__).parent / "share-qr.json").read_text(encoding="utf-8"))
-        bundle = {"project": "TokenMe", "version": "0.1.0",
+        snapshots = read_timeline(store) if history["enabled"] else []
+        bundle = {"project": "TokenMe", "version": __version__,
                   "generated_at": datetime.now(timezone.utc).isoformat(),
                   "default_view": args.month or "all", "views": views,
                   "source_status": [r.status() for r in results], "account": account_data,
-                  "history": history, "share": share,
+                  "history": history, "share": share, "snapshots": snapshots,
                   "unconnected": ["Kimi 网页 / App", "千问网页 / App", "DeepSeek 网页 / App", "ChatGPT 常规聊天全量范围待确认"]}
         args.out.mkdir(parents=True, exist_ok=True)
         save_json(args.out / "summary.json", selected)
@@ -153,15 +190,22 @@ def main(argv=None):
         template = template.replace("__SHARE_CARD_SCRIPT__", card_script)
         safe = json.dumps(bundle, ensure_ascii=False).replace("<", "\\u003c").replace("\u2028", "\\u2028").replace("\u2029", "\\u2029")
         (args.out / "report.html").write_text(template.replace("__REPORT_DATA__", safe), encoding="utf-8")
-        print(json.dumps({"report": str(args.out / "report.html"), "period": selected["period"],
+        reply({"report": str((args.out / "report.html").resolve()), "period": selected["period"],
+                          "python": sys.executable,
+                          "store": str(store.resolve()) if history["enabled"] else None,
                           "local_recorded_tokens": selected["total_tokens"],
-                          "sources": selected["sources"], "source_status": bundle["source_status"], "history": history}, ensure_ascii=False))
+                          "sources": selected["sources"], "source_status": bundle["source_status"], "history": history})
         if args.open:
             webbrowser.open((args.out / "report.html").resolve().as_uri())
         return 0
     except (UsageError, ValueError, OSError, KeyError, TypeError, sqlite3.Error) as exc:
         # Expected errors never include raw message bodies or credentials.
-        print("TokenMe: " + (str(exc) if isinstance(exc, (UsageError, OSError, sqlite3.Error)) else "invalid input data"), file=sys.stderr)
+        message = str(exc) if isinstance(exc, (UsageError, OSError, sqlite3.Error)) else "invalid input data"
+        if args.json:
+            print(json.dumps({"schema_version": "0.2", "ok": False, "command": operation,
+                              "error": {"code": "operation_failed", "message": message}}, ensure_ascii=False))
+        else:
+            print("TokenMe: " + message, file=sys.stderr)
         return 2
 
 

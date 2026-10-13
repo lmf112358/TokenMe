@@ -36,13 +36,15 @@
     const date = new Date(Date.parse(instant) + delta * 60000);
     return Number.isFinite(date.getTime()) ? date.toISOString().slice(0, 7).replace('-', '.') : '生成时间未提供';
   }
-  function modelFor(bundle, nickname = '') {
-    // Always pair cumulative I and grade with the same all-history ledger.
-    // Never include the overlapping account summary or the dashboard month.
-    const v = bundle.views && bundle.views.all;
+  function modelFor(bundle, nickname = '', period = 'all') {
+    // A monthly souvenir has its own amount; material always describes cumulative history.
+    const cumulative = bundle.views && bundle.views.all;
+    if (!cumulative || !validCount(cumulative.total_tokens)) return { available: false, message: '累计记录不可用，暂不能生成分享图。' };
+    const v = bundle.views && bundle.views[period];
     const total = v && v.total_tokens;
-    if (!v || !validCount(total)) return { available: false, message: '累计记录不可用，暂不能生成分享图。' };
-    const level = levelFor(total);
+    if (!v || !validCount(total)) return { available: false, message: '该周期记录不可用，暂不能生成分享图。' };
+    if (total === 0 && period !== 'all') return { available: false, message: '这个月暂无有效记录，选择其他月份或累计档案。' };
+    const level = levelFor(cumulative.total_tokens);
     if (!level) return { available: false, message: '暂无有效用量记录，暂未评级。未接入的平台不代表零用量。' };
     const first = v.first_observed_day || v.daily?.[0]?.date;
     const last = v.last_observed_day || v.daily?.at(-1)?.date;
@@ -50,6 +52,8 @@
     const daily = (v.daily || []).filter(d => validCount(d.total_tokens)).map(d => Math.log1p(d.total_tokens));
     const max = Math.max(1, ...daily);
     return { available: true, total, level, value: formatI(total), nickname: String(nickname).trim() || '我的 AI 足迹',
+      scope: period, label: period === 'all' ? '累计 I 量' : period.replace('-', '.') + ' I 量',
+      gradeLabel: (period === 'all' ? '' : '累计 ') + `L${level.number} · ${level.name}`,
       stamp: monthAt(bundle.generated_at, v.timezone), range, activeDays: v.active_days,
       tools: toolsLabel(v.sources || []), rhythm: daily.map(n => n / max) };
   }
@@ -86,8 +90,8 @@
     ctx.fillStyle = l.foil; ctx.fillRect(0, h - 5, 1080, 5);
     text('TokenMe', 72, 112, 44, l.ink, 'left', 400, 500);
     text(model.stamp, 1008, 112, 40, l.sub, 'right', 480);
-    text(model.nickname, 72, 207, 53, l.ink, 'left', 650);
-    text(`L${l.number} · ${l.name}`, 1008, 204, 42, l.sub, 'right', 240);
+    text(model.nickname, 72, 207, 53, l.ink, 'left', model.scope === 'all' ? 650 : 565);
+    text(model.gradeLabel || `L${l.number} · ${l.name}`, 1008, 204, model.scope === 'all' ? 42 : 36, l.sub, 'right', 350);
     ctx.save(); ctx.translate(540, square ? (hasQR ? 374 : 418) : 531); ctx.scale(square ? (hasQR ? .64 : .76) : 1.04, square ? (hasQR ? .64 : .76) : 1.04);
     const foil = ctx.createLinearGradient(-230, -230, 240, 240);
     foil.addColorStop(0, l.foil); foil.addColorStop(.43, l.number === 5 ? '#f3e1b5' : l.ink); foil.addColorStop(.64, l.foil); foil.addColorStop(1, l.ink);
@@ -101,7 +105,7 @@
       ctx.bezierCurveTo(57 - t * 176, 290 - t * 86, -286 + t * 37, 144 - t * 92 + shift, -214 + t * 126, -102 - t * 58); ctx.stroke();
     }
     ctx.restore();
-    text('累计 I 量', 540, square ? (hasQR ? 590 : 660) : 872, 42, l.sub, 'center');
+    text(model.label || '累计 I 量', 540, square ? (hasQR ? 590 : 660) : 872, 42, l.sub, 'center');
     const numberY = square ? (hasQR ? 719 : 797) : 1038;
     let numberSize = square ? 146 : 176;
     ctx.font = '400 60px "Segoe UI", "Microsoft YaHei", sans-serif';
