@@ -23,10 +23,31 @@ jobs:
         with:
           node-version: '22'
       - run: python -m unittest discover -s tests -v
-      - run: node --test tests/test_share_card.cjs
+      - run: node --test tests/test_share_card.cjs tests/test_tokscale_card.cjs
       - run: git diff --check
+  browser:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install browser test tools
+        run: |
+          npm install --prefix "$RUNNER_TEMP/tokenme-browser" --no-save playwright@1.62.1
+          "$RUNNER_TEMP/tokenme-browser/node_modules/.bin/playwright" install --with-deps chromium
+      - name: Check generated offline reports and card downloads
+        run: NODE_PATH="$RUNNER_TEMP/tokenme-browser/node_modules" node scripts/verify_report.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: report-browser-evidence
+          path: .local/report-smoke/*.png
   package:
-    needs: test
+    needs: [test, browser]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

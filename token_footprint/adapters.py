@@ -16,11 +16,12 @@ class ScanResult:
     diagnostics: Counter = field(default_factory=Counter)
     files: int = 0
     available: bool = False
+    coverage: str = "retained_local_records_only"
 
     def status(self):
         return {"source": self.source, "available": self.available, "files": self.files,
                 "records": len(self.records), "diagnostics": dict(self.diagnostics),
-                "coverage": "retained_local_records_only", "evidence": "local_record"}
+                "coverage": self.coverage, "evidence": "local_record"}
 
 
 def codex_scan(roots):

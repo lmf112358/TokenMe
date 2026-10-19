@@ -16,7 +16,7 @@ python scripts/bootstrap.py --run
 已有匹配 wheel 时可离线安装：
 
 ```shell
-python scripts/bootstrap.py --wheel dist/v0.2/token_footprint_local-0.2.0.dev1-py3-none-any.whl --run
+python scripts/bootstrap.py --wheel dist/token_footprint_local-0.2.0.dev4-py3-none-any.whl --run
 ```
 
 `--open` 可与 `--run` 合用，显式打开报告。默认不打开浏览器。安装不是自动更新器；升级应使用明确版本，不从浮动远端执行脚本。
@@ -55,5 +55,9 @@ python -m token_footprint backup --out /your/private/backup.sqlite3 --json
 JSONL 只搬运规范化记录；恢复后重新建立快照起点，不伪造历史快照。需要完整档案请备份 SQLite。
 
 ## 交付给用户
+
+dev4 默认扫描八个本地来源。`doctor` 的 `platforms` 和报告的覆盖表分别说明待扫描、待导入、待接入，不将目录存在视为成功。Cursor/TRAE 使用显式导入参数，参见 [平台覆盖与合同](platform-coverage.md)。用户未提供导出或平台没有可靠入口时，使用 [缺陷清单](platform-gaps.md) 记录后续工作，不能解密 Cookie 或用 Credits 换算 Token。
+
+已有 Tokscale graph 文件时，使用 `run --sources none --tokscale <文件> --tokscale-offset <原日界线> --offset <相同偏移> --out <独立报告目录> --json`。原导出时区不能凭本机当前时区猜测；来源重叠不能忽略。可用 `--tokscale-clients` 只补充缺少平台，见 [Tokscale 导入说明](tokscale-import.md)。不要自动执行 Tokscale 的 login/submit 或替用户更改其全局配置。
 
 展示本地报告，说明读取到的来源、缺失范围、本次新增和修订。用户在报告中选择昵称、分享月份、尺寸与二维码，导出 PNG。不得擅自上传报告、生成公开个人档案、把 Token 叫作能力或信用评分，或声称已读取未支持的普通网页/App 账号。

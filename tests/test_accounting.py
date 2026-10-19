@@ -213,6 +213,8 @@ class AccountingTests(unittest.TestCase):
             self.assertNotIn('</script><script>alert', report)
             self.assertNotIn("PRIVATE PROMPT", report)
             self.assertNotIn("__SHARE_CARD_SCRIPT__", report)
+            self.assertNotIn("__CYBER_CARD_SCRIPT__", report)
+            self.assertIn("TokenMeCyber", report)
             self.assertIn("TokenMeCard", report)
             self.assertFalse(data["source_status"][0]["available"])
             self.assertTrue(data["unconnected"])

@@ -8,8 +8,9 @@
 :root{--ink:#153d35;--paper:#f3f1e8;--muted:#64766d;--line:#d6dbd0;--lime:#d7f590;--white:#fffef8;--orange:#b86d3d}*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:Inter,"Segoe UI","Microsoft YaHei",sans-serif}main{max-width:1240px;margin:auto;padding:36px 44px 60px}nav{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line);padding-bottom:22px}.brand{font-size:15px;font-weight:750;letter-spacing:2px}.brand span{display:inline-block;width:12px;height:12px;background:var(--ink);border-radius:50%;margin-right:12px}.meta{font-size:12px;color:var(--muted)}header{display:flex;justify-content:space-between;gap:24px;align-items:end;margin:42px 0 26px}h1{font-size:42px;font-weight:650;letter-spacing:-2px;margin:6px 0 12px}.eyebrow{font-size:11px;letter-spacing:2px;font-weight:650}p{line-height:1.8;margin:8px 0;color:var(--muted);font-size:14px}select,button,input{font:inherit;border:1px solid var(--line);border-radius:8px;padding:11px 14px;background:var(--white);color:var(--ink)}button{cursor:pointer;font-weight:600}button.primary{background:var(--ink);color:var(--white);border-color:var(--ink)}button:hover{filter:brightness(.95)}label{font-size:12px;color:var(--muted)}.grid{display:grid;grid-template-columns:1.6fr 1fr;gap:20px}.hero{background:var(--ink);color:var(--paper);border-radius:20px;padding:30px 32px}.hero .label{color:#b8cec1;font-size:13px}.big{font-size:64px;line-height:1.25;font-weight:600;letter-spacing:-3px;margin:14px 0 4px;font-variant-numeric:tabular-nums}.exact{font-size:12px;color:#b8cec1}.hero-footer{display:flex;gap:36px;border-top:1px solid #3b5a51;margin-top:30px;padding-top:20px}.hero-footer strong{font-size:23px;font-weight:500;display:block;color:var(--lime)}.hero-footer span{font-size:12px;color:#b8cec1}.box{border:1px solid var(--line);background:var(--white);border-radius:20px;padding:25px}.box h2{font-size:16px;margin:0 0 10px}.account .number{font-size:39px;letter-spacing:-1px;margin:18px 0 2px}.tag{font-size:11px;background:#e8eddf;padding:5px 8px;border-radius:5px;display:inline-block}.account .foot{border-top:1px solid var(--line);margin-top:18px;padding-top:14px;font-size:12px}.row{display:flex;justify-content:space-between;align-items:center;gap:12px}.section{margin-top:22px}.breakdown{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:20px}.metric{padding:20px;border-top:1px solid var(--line)}.metric label{display:block}.metric strong{font-size:23px;display:block;margin-top:8px;font-weight:550}.metric small{font-size:11px;color:var(--muted)}.chart{display:flex;align-items:end;gap:5px;height:118px;margin-top:26px}.bar{background:#5f8570;flex:1;min-width:3px;border-radius:3px 3px 0 0;position:relative}.bar:hover{background:#a1bd6b}.chart-label{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-top:8px}.source-row{padding:18px 0;border-bottom:1px solid var(--line)}.source-row:last-child{border:0}.source-row strong{font-weight:600}.track{height:5px;background:#e8eddf;margin-top:12px;border-radius:4px}.fill{height:100%;background:#6b8970;border-radius:4px}.notice{padding:14px 18px;border:1px solid var(--line);border-radius:10px;font-size:12px;color:var(--muted);line-height:1.8;margin-top:20px}.tools{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.tools input{max-width:170px}.share{background:#e7ecd9;margin-top:22px;border-radius:16px;padding:22px 26px}.share p{margin:4px 0}.share canvas{display:none}.status-list{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.status-list span{padding:6px 9px;background:#eeeee6;border-radius:5px;font-size:11px;color:var(--muted)}details{margin-top:22px;font-size:12px;color:var(--muted)}summary{cursor:pointer;padding:8px 0}pre{white-space:pre-wrap;word-break:break-word;font-size:11px}footer{display:flex;justify-content:space-between;gap:20px;border-top:1px solid var(--line);margin-top:32px;padding-top:18px;font-size:11px;color:var(--muted)}#feedback{font-size:12px;color:var(--ink);min-height:20px}.formula{font-family:ui-monospace,monospace;color:var(--ink)}@media(max-width:850px){main{padding:22px}.grid{grid-template-columns:1fr}header{align-items:start;flex-direction:column}h1{font-size:34px}.big{font-size:52px}.breakdown{gap:0}.metric{padding:14px 8px}.metric strong{font-size:20px}.share .row{align-items:start;flex-direction:column}nav .meta{display:none}footer{flex-direction:column;gap:8px}}@media print{button,select,input,.share,details{display:none}main{max-width:none}body{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
 
 .share-layout{display:grid;grid-template-columns:minmax(220px,.85fr) minmax(280px,1fr);gap:28px;align-items:start;margin-top:20px}.share-controls{display:grid;gap:16px}.share-controls label{display:grid;gap:7px}.share-controls input,.share-controls select{width:100%;min-width:0}.share-stage{min-width:0;display:flex;justify-content:center;align-items:center}.share-stage img{width:100%;max-width:405px;height:auto;box-shadow:0 10px 25px #153d3514}.share-stage [hidden]{display:none}.share-controls .meta{line-height:1.8}.share-status{font-size:14px;font-weight:600;margin:0}.share-rule{font-size:12px;line-height:1.8;color:var(--muted)}button:disabled{opacity:.5;cursor:default}@media(max-width:700px){.share-layout{grid-template-columns:1fr}.share-stage{grid-row:1}.share{padding:20px 16px}.share-controls{min-width:0}}
-</style>
-<style>.chart{overflow-x:auto;overflow-y:hidden}.hero-footer{flex-wrap:wrap;gap:24px}.source-row .row{flex-wrap:wrap}.share-controls .check{display:flex;align-items:center;gap:9px}.share-controls .check input{width:auto;accent-color:var(--ink)}.share-controls a{color:var(--ink)}.ledger-note{margin-top:12px;font-size:12px}.share-controls details{margin-top:0}button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:3px solid #8ba74b;outline-offset:3px}</style>
+  .share-stage{flex-direction:column;gap:12px}.share-stage p{max-width:405px;text-align:center}
+  </style>
+<style>.grid>*{min-width:0}.chart{overflow-x:auto;overflow-y:hidden}.hero-footer{flex-wrap:wrap;gap:24px}.source-row .row{flex-wrap:wrap}.share-controls .check{display:flex;align-items:center;gap:9px}.share-controls .check input{width:auto;accent-color:var(--ink)}.share-controls a{color:var(--ink)}.ledger-note{margin-top:12px;font-size:12px}.share-controls details{margin-top:0}button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:3px solid #8ba74b;outline-offset:3px}</style>
 </head>
 <body><main>
 <nav><div class="brand"><span></span>TokenMe</div><div class="meta">本地优先 · 协作档案 · v0.2 预览</div></nav>
@@ -19,6 +20,12 @@
 <section class="box account"><div class="row"><h2>官方账号活动</h2><span class="tag" id="account-tag">独立口径</span></div><p>OpenAI / Codex 服务返回的累计值</p><div class="number" id="account-total">未连接</div><div class="meta" id="account-exact"></div><div class="foot" id="account-note">可通过已登录的 Codex 客户端读取账号摘要。</div></section>
 </div>
 <div class="breakdown"><div class="metric"><label>输入 Token</label><strong id="input">—</strong><small>含已记录的缓存读取与写入</small></div><div class="metric"><label>输出 Token</label><strong id="output">—</strong><small>推理 Token 属于输出子集</small></div><div class="metric"><label>其中：缓存命中</label><strong id="cache">—</strong><small id="cache-coverage"></small></div></div>
+<section class="box section" aria-labelledby="collaboration-title">
+<div class="row"><h2 id="collaboration-title">AI 协作阶段</h2><span class="tag" id="collaboration-stage"></span></div>
+<p id="collaboration-headline" style="font-size:20px;font-weight:600;color:var(--ink)"></p>
+<p id="collaboration-evidence"></p><p class="meta" id="collaboration-basis"></p>
+<details><summary>查看判断依据与阶段规则</summary><p id="collaboration-rule"></p><p>仅有一个活跃日时显示“初次探索”；其余未达到持续使用条件的记录显示“正在积累记录”。月度视图按月底评估，当前月份按生成日评估；近 30 天可能跨月。“周”指向前划分的 7 天区间，不是自然周。没有记录不代表没有使用。</p><div id="collaboration-intervals"></div></details>
+</section>
 <div class="grid section"><section class="box"><div class="row"><h2>使用节奏</h2><span class="meta" id="chart-caption"></span></div><div class="chart" id="chart"></div><div class="chart-label"><span id="chart-start"></span><span id="chart-end"></span></div><p style="font-size:11px;margin-top:20px">无记录日不代表没有使用；日志保留、其他设备和中断任务都可能影响覆盖。</p></section><section class="box"><h2>工具分布</h2><div id="sources"></div></section></div>
 <div class="notice"><span class="formula">总量 = 输入（含缓存）+ 输出（含推理）</span><br>官方账号活动与本地明细可能重叠，当前分别展示。这里的数字表示使用量，不代表费用、算力等价或能力评分。</div>
 <p class="ledger-note" id="history-note"></p>
@@ -33,13 +40,16 @@
 <div class="share-layout">
   <div class="share-controls">
     <label for="nickname">昵称（可选）<input id="nickname" placeholder="我的 AI 足迹" maxlength="24" autocomplete="off"></label>
+    <label for="card-style">卡片视觉<select id="card-style"><option value="cyber">混沌涌现 · 空间等级</option><option value="paper">材质经典 · 纸与金属</option></select></label>
     <label for="card-format">图片尺寸<select id="card-format"><option value="portrait">竖版 · 1080 × 1440</option><option value="square">方版 · 1080 × 1080</option></select></label>
     <label for="share-period">分享内容<select id="share-period"></select></label>
     <label class="check"><input id="include-qr" type="checkbox" checked>附上「生成我的」二维码</label>
     <div class="meta">二维码仅指向 <a href="https://github.com/lmf112358/TokenMe" target="_blank" rel="noopener noreferrer">TokenMe 项目入口</a>，不携带个人数据。</div>
     <div><p class="share-status" id="share-grade"></p><div class="meta" id="share-total"></div></div>
-    <div class="share-rule">1 I = 100万 Token。月度图展示当月用量，材质仍由累计记录决定。仅覆盖已记录的历史，不代表能力或信用评分。</div>
-    <details><summary>五种材质，属于每一种使用节奏</summary><p>素棉 &lt; 1000万 · 染纸 ≥ 1000万<br>珠光 ≥ 1亿 · 钛银 ≥ 10亿 · 墨金 ≥ 100亿</p><p>没有有效记录时暂不评级。等级不按月清零；记录纠错后会重新计算。</p></details>
+    <div><p class="share-status" id="share-collaboration-stage"></p><p class="meta" id="share-collaboration-evidence"></p><div class="meta" id="share-collaboration-basis"></div></div>
+    <details><summary>分享图的协作阶段如何判断</summary><p id="share-collaboration-rule"></p><p>阶段依据截至评估日的近 30 天记录，与累计用量材质分别计算。仅有一个活跃日时显示“初次探索”，其余未达标时显示“正在积累记录”。月度图按月底评估，当前月份按生成日评估；“周”为连续 7 天区间。没有记录不代表没有使用。</p><div id="share-collaboration-intervals"></div></details>
+    <div class="share-rule">1 I = 100万 Token。月度图展示当月用量，等级仍由累计记录决定。仅覆盖已记录的历史，不代表能力或信用评分。</div>
+    <details><summary>五档等级：从单束光到完整场</summary><p>L1 初光：单核，低于 1000万<br>L2 脉冲：双轨，1000万至低于 1亿<br>L3 交织：多层，1亿至低于 10亿<br>L4 裂变：裂隙，10亿至低于 100亿<br>L5 涌现：全域，100亿及以上</p><p>材质经典对应素棉、染纸、珠光、钛银、墨金；两套视觉共用同一等级门槛。没有有效记录时暂不评级。等级不按月清零；记录纠错后会重新计算。</p></details>
     <button class="primary" id="export-card" disabled>保存分享图 PNG</button>
     <div id="feedback" aria-live="polite"></div>
   </div>
@@ -47,7 +57,7 @@
 </div>
 <canvas id="card" width="1080" height="1440"></canvas>
 </section>
-<section class="section"><h2 style="font-size:16px">接入覆盖</h2><p style="font-size:12px">当前采集已保留的客户端记录。以下入口尚未计入，未接入不等于零用量。</p><div class="status-list" id="unconnected"></div></section>
+<section class="section"><h2 style="font-size:16px">接入覆盖</h2><p style="font-size:12px">已记录、可导入与待接入分别展示。找到目录不代表账本完整；未接入不等于零用量。</p><div id="platforms" class="grid"></div><p>其他尚未直接接入的聊天入口</p><div class="status-list" id="unconnected"></div></section>
 <details><summary>查看采集状态与数据边界</summary><pre id="diagnostics"></pre><p>本地数据未经过服务商账单核验。导入工具遵循源文件日界线，账号日桶保留服务端原始日期。本页不含提示词、对话内容、文件路径、账号凭据。</p></details>
 <footer><span>TokenMe · 让 AI 使用留下足迹</span><span id="generated"></span></footer>
 </main>
@@ -56,22 +66,37 @@
 __SHARE_CARD_SCRIPT__
 </script>
 <script>
+__CYBER_CARD_SCRIPT__
+</script>
+<script>
 'use strict';
 const data=JSON.parse(document.getElementById('data').textContent);
 const $=id=>document.getElementById(id), fmt=n=>n==null?'未提供':Number(n).toLocaleString('zh-CN');
 function compact(n){if(n==null)return '未提供';return n>=1e8?(n/1e8).toFixed(2)+' 亿':n>=1e4?(n/1e4).toFixed(2)+' 万':fmt(n)}
-const names={codex:'Codex',workbuddy:'WorkBuddy',kimi:'Kimi Code',qwen:'Qwen Code',claude:'Claude Code'};
+const names={codex:'Codex',workbuddy:'WorkBuddy',kimi:'Kimi Code',qwen:'Qwen Code',claude:'Claude Code',pi:'Pi Agent',gemini:'Gemini CLI',opencode:'OpenCode',cursor:'Cursor',trae:'TRAE',tokscale_import:'Tokscale 导入',...Object.fromEntries((data.platforms||[]).map(p=>[p.source,p.name]))};
+const platformStates={recorded:'已记录',imported_daily:'已导入（日汇总）',needs_adapter:'待接入',no_valid_records:'暂无有效计数',not_found:'未找到记录目录',import_required:'等待导入',not_scanned:'本次未扫描'};
+for(const item of data.platforms||[]){const box=document.createElement('div');box.className='box';const title=document.createElement('strong');title.textContent=item.name+' · '+(platformStates[item.state]||item.state);const note=document.createElement('p');note.textContent=item.note;box.append(title,note);if(item.records){const count=document.createElement('span');count.className='meta';count.textContent=fmt(item.records)+' 条已保存记录';box.append(count)}$('platforms').append(box)}
+function renderCollaboration(prefix,c){
+ $(prefix+'stage').textContent=c.stage;
+ if($(prefix+'headline'))$(prefix+'headline').textContent=c.headline;
+ $(prefix+'evidence').textContent=c.evidence;
+ $(prefix+'basis').textContent=c.basis+(c.available?` · ${c.from} 至 ${c.through}`:'');
+ $(prefix+'rule').textContent=c.rule;
+ $(prefix+'intervals').replaceChildren();
+ for(const interval of c.intervals||[]){const p=document.createElement('p');p.textContent=`${interval.from} 至 ${interval.through}：${interval.activeDays} 个活跃日` ;$(prefix+'intervals').append(p)}
+}
 for(const key of Object.keys(data.views).sort().reverse()){const option=document.createElement('option');option.value=key;option.textContent=key==='all'?'全部本地历史':key;$('period').append(option)}
 $('period').value=data.default_view;
 function render(){const view=data.views[$('period').value];$('total').textContent=compact(view.total_tokens);$('exact').textContent=fmt(view.total_tokens)+' tokens · 保留日志的观测值';$('days').textContent=view.active_days;$('source-count').textContent=view.sources.length;$('period-label').textContent=$('period').value==='all'?'全部历史':view.period;$('timezone').textContent=view.timezone;$('input').textContent=compact(view.input_tokens);$('output').textContent=compact(view.output_tokens);$('cache').textContent=compact(view.cached_input_tokens);$('cache-coverage').textContent=`${view.cached_input_tokens_known_records} / ${view.records} 条记录提供了缓存明细`;
  $('sources').replaceChildren();for(const source of view.sources){const outer=document.createElement('div');outer.className='source-row';const row=document.createElement('div');row.className='row';const name=document.createElement('strong');name.textContent=names[source.source]||source.source;const value=document.createElement('span');value.textContent=compact(source.total_tokens);row.append(name,value);const track=document.createElement('div');track.className='track';const fill=document.createElement('div');fill.className='fill';fill.style.width=(view.total_tokens?source.total_tokens/view.total_tokens*100:0)+'%';track.append(fill);outer.append(row,track);$('sources').append(outer)}if(!view.sources.length){const p=document.createElement('p');p.textContent='这个周期暂无可读取的记录。';$('sources').append(p)}
- const daily=view.daily;$('chart').replaceChildren();const max=Math.max(1,...daily.map(d=>d.total_tokens));for(const d of daily){const bar=document.createElement('div');bar.className='bar';bar.style.height=Math.max(2,d.total_tokens/max*110)+'px';bar.title=d.date+' · '+fmt(d.total_tokens)+' tokens';$('chart').append(bar)}$('chart-caption').textContent='仅展示有记录日';$('chart-start').textContent=daily[0]?.date||'无记录';$('chart-end').textContent=daily.at(-1)?.date||'';}
+ const daily=view.daily;$('chart').replaceChildren();const max=Math.max(1,...daily.map(d=>d.total_tokens));for(const d of daily){const bar=document.createElement('div');bar.className='bar';bar.style.height=Math.max(2,d.total_tokens/max*110)+'px';bar.title=d.date+' · '+fmt(d.total_tokens)+' tokens';$('chart').append(bar)}$('chart-caption').textContent='仅展示有记录日';$('chart-start').textContent=daily[0]?.date||'无记录';$('chart-end').textContent=daily.at(-1)?.date||'';
+ renderCollaboration('collaboration-',TokenMeCard.collaborationFor(data,$('period').value));}
 if(data.account){const a=data.account,n=a.summary.lifetimeTokens;$('account-total').textContent=compact(n);$('account-exact').textContent=fmt(n)+(n==null?'':' tokens · 累计活动');$('account-tag').textContent='官方接口返回';const buckets=a.dailyUsageBuckets;$('account-note').textContent=`${buckets==null?'未返回每日记录':`返回 ${buckets.length} 个每日记录`}。此累计值不随左侧月份变化，不与本地明细叠加；具体产品覆盖及日界线仍待确认。`}
 for(const item of data.unconnected){const s=document.createElement('span');s.textContent=item;$('unconnected').append(s)}$('diagnostics').textContent=JSON.stringify({latest_scan:data.source_status,history:data.history},null,2);$('generated').textContent='本地生成于 '+new Date(data.generated_at).toLocaleString('zh-CN');$('period').addEventListener('change',render);render();
 $('history-note').textContent=data.history?.enabled?`已从本地历史库生成 · ${fmt(data.history.records)} 条记录 · 清理原日志不会移除已保存记录。${data.history.mode==='report'?'本次未扫描客户端。':''}`:'本次为临时扫描，未保存到历史库。';
 const signed=n=>(n>0?'+':'')+fmt(n), h=data.history||{};
 $('change-summary').textContent=h.added_tokens!=null?`新增 ${fmt(h.added)} 条 / ${fmt(h.added_tokens)} Token；修订 ${fmt(h.updated)} 条 / ${signed(h.revised_tokens)} Token；净变化 ${signed(h.net_tokens)} Token。重复记录 ${fmt(h.unchanged)} 条，旧快照忽略 ${fmt(h.older_ignored)} 条。${h.snapshot_created?'已保存新快照。':'记录未变，保留原快照。'}`:h.mode==='report'?'仅用已保存记录重建，本次未采集或创建快照。':'本次未写入历史库，暂无可比较的入库变化。';
-for(const source of data.source_status||[]){const p=document.createElement('p');p.textContent=`${names[source.source]||source.source} · ${source.available?(source.records?'读取 '+fmt(source.records)+' 条':'找到目录，暂无有效记录'):'未找到目录'} · ${fmt(source.files)} 个文件`; $('coverage').append(p)}
+for(const source of data.source_status||[]){const p=document.createElement('p');p.textContent=`${names[source.source]||source.source} · ${source.available?(source.records?'读取 '+fmt(source.records)+' 条':'找到来源，暂无有效记录'):'未找到目录'} · ${fmt(source.files)} 个文件${Object.values(source.diagnostics||{}).some(n=>n>0)?' · 有采集诊断，详见页面底部':''}`; $('coverage').append(p)}
 if(!(data.source_status||[]).length)$('coverage').textContent='本次未运行客户端采集；来源范围以已保存记录为准。';
 const snapshots=data.snapshots||[];$('timeline-label').textContent=`我的历史快照 · ${snapshots.length} 次${snapshots.length===50?'（最近）':''}`;
 for(const snapshot of snapshots){const tr=document.createElement('tr');for(const value of [new Date(snapshot.created_at).toLocaleString('zh-CN'),TokenMeCard.formatI(snapshot.summary.total_tokens),snapshot.since_previous_tokens==null?'建立起点':signed(snapshot.since_previous_tokens),fmt(snapshot.summary.active_days)]){const td=document.createElement('td');td.textContent=value;tr.append(td)}$('timeline').append(tr)}
@@ -79,18 +104,34 @@ for(const key of Object.keys(data.views).sort().reverse()){const option=document
 function refreshShare(){
   $('feedback').textContent='';
   const model=TokenMeCard.modelFor(data,$('nickname').value,$('share-period').value);
+  renderCollaboration('share-collaboration-',TokenMeCard.collaborationFor(data,$('share-period').value));
   $('export-card').disabled=!model.available;
   $('card-preview').hidden=!model.available;$('share-empty').hidden=model.available;
-  if(!model.available){$('share-empty').textContent=model.message;$('share-grade').textContent='待记录';$('share-total').textContent='';return;}
+  const cyber=$('card-style').value==='cyber';
+  if(!model.available){
+    $('share-empty').textContent=model.message;$('share-grade').textContent='待记录';$('share-total').textContent='';
+    if(cyber){
+      const total=data.views?.all?.total_tokens;
+      const connected=(data.source_status||[]).some(s=>s.available)||(data.platforms||[]).some(p=>['recorded','no_valid_records','imported_daily'].includes(p.state))||data.history?.records>0;
+      const state=total>0&&data.views?.[$('share-period').value]?.total_tokens===0?'empty':total===0?(connected?'zero':'unconnected'):undefined;
+      try{
+        TokenMeCyber.draw($('card'),{...model,nickname:$('nickname').value.trim()||'我的 AI 足迹',stamp:TokenMeCard.monthAt(data.generated_at,data.views?.all?.timezone)},$('card-format').value,{state});
+        $('card-preview').src=$('card').toDataURL('image/png');$('card-preview').alt=model.message;$('card-preview').hidden=false;
+      }catch(error){$('card-preview').hidden=true;}
+    }
+    return;
+  }
   try{
-    TokenMeCard.draw($('card'),model,$('card-format').value,{qr:$('include-qr').checked?data.share:null});
+    (cyber?TokenMeCyber:TokenMeCard).draw($('card'),model,$('card-format').value,{qr:$('include-qr').checked?data.share:null});
     $('card-preview').src=$('card').toDataURL('image/png');
-    $('card-preview').alt=`${model.scope==='all'?'累计':model.scope} ${fmt(model.total)} Token，累计 L${model.level.number} ${model.level.name}，${$('card').width} × ${$('card').height} 分享图`;
-    $('share-grade').textContent=model.gradeLabel;
+    const themeName=cyber?TokenMeCyber.themes[model.level.number-1].name:model.level.name;
+    $('card-preview').alt=`${model.scope==='all'?'累计':model.scope} ${fmt(model.total)} Token，累计 L${model.level.number} ${themeName}，${model.collaboration.stage}，${model.collaboration.evidence}，${$('card').width} × ${$('card').height} 分享图`;
+    $('share-grade').textContent=`累计 L${model.level.number} · ${themeName}`;
     $('share-total').textContent=`${model.value} I · ${fmt(model.total)} Token · ${model.range}`;
   }catch(error){$('export-card').disabled=true;$('card-preview').hidden=true;$('share-empty').hidden=false;$('share-empty').textContent='图片生成失败，请使用支持 Canvas 的浏览器。';}
 }
 $('nickname').addEventListener('input',refreshShare);
+$('card-style').addEventListener('change',refreshShare);
 $('card-format').addEventListener('change',refreshShare);
 $('share-period').addEventListener('change',refreshShare);
 $('include-qr').addEventListener('change',refreshShare);
@@ -101,7 +142,7 @@ $('export-card').addEventListener('click',()=>{
     const snapshot=document.createElement('canvas');snapshot.width=$('card').width;snapshot.height=$('card').height;
     snapshot.getContext('2d').drawImage($('card'),0,0);
     const scope=$('share-period').value==='all'?'cumulative':$('share-period').value;
-    const filename=`TokenMe-${scope}-${snapshot.width}x${snapshot.height}.png`;
+    const filename=`TokenMe-${scope}-${$('card-style').value}-${snapshot.width}x${snapshot.height}.png`;
     snapshot.toBlob(blob=>{
       if(!blob){$('feedback').textContent='图片生成失败，请重试。';return;}
       const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=filename;a.click();

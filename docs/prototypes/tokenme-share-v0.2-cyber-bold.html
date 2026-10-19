@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TokenMe · 第二方案进阶 / 混沌涌现</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#090b12;color:#e9ecfa;font:14px/1.6 "Segoe UI","Microsoft YaHei",sans-serif}main{max-width:1160px;margin:auto;padding:38px 26px}header{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #282d42;padding-bottom:22px}header b{font-size:22px;letter-spacing:-1px}header span{font-size:12px;color:#909ab7}section{display:grid;grid-template-columns:1fr 300px;gap:58px;padding-top:32px}.stage{display:flex;justify-content:center;align-items:flex-start}canvas{width:min(100%,540px);height:auto;box-shadow:0 20px 80px #0008;border:1px solid #34384d}aside{padding-top:14px}h1{font-size:32px;line-height:1.2;letter-spacing:-1px;margin:12px 0 22px}p{color:#9ca6c0}small,.eyebrow{font-size:11px;letter-spacing:2px;color:#9b99ff}.controls{border-top:1px solid #282d42;margin-top:28px;padding-top:18px}label{display:block;margin-bottom:20px;color:#bfc6dc;font-size:12px}select,input[type=text],button{width:100%;background:#141827;border:1px solid #353c57;color:#e9ecfa;border-radius:7px;padding:11px 12px;font:inherit;margin-top:7px}input[type=range]{display:block;width:100%;margin-top:14px;accent-color:#a29aff}button{background:#d9d5ff;color:#16142f;cursor:pointer;font-weight:600}button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid #83f4ee;outline-offset:3px}.note{font-size:12px;color:#7e89a7}.range-label{display:flex;justify-content:space-between;color:#7e89a7;font-size:11px}output{float:right;color:#c7c1ff}a{color:#b7afff}.status{min-height:22px;font-size:12px;color:#b7afff}@media(max-width:760px){main{padding:20px 16px}section{grid-template-columns:1fr;gap:20px}aside{max-width:540px;margin:auto;width:100%}header span{max-width:160px;text-align:right}h1{font-size:28px}}
+</style>
+<main>
+<header><b>TokenMe</b><span>VISUAL STUDY 02 · 视觉探索</span></header>
+<section>
+<div class="stage"><canvas id="card" width="1080" height="1440" role="img" aria-label="TokenMe AI 赛博分享卡片，使用合成示例数据"></canvas></div>
+<aside><div class="eyebrow">CHAOS / EMERGENCE</div><h1>混沌涌现</h1><p>线条从共同的轨道逸出，在折叠空间里撕开、交错、重新汇聚。局部越界，整体仍被一个看不见的结构牵引。</p><p>电青与洋红正面碰撞，酸绿穿过深紫。每一束光都有自己的路径。</p>
+<div class="controls">
+<label>昵称<input id="nickname" type="text" maxlength="60" value="我的 AI 足迹"></label>
+<label>色域<select id="palette"><option value="spectral">光谱碰撞 · 电青 / 洋红 / 酸绿</option><option value="ion">离子风暴 · 酸绿 / 电蓝</option><option value="ember">临界爆发 · 橙红 / 洋红 / 紫</option></select></label>
+<label>混乱程度 <output id="amount">82%</output><input id="chaos" type="range" min="0" max="100" value="82"><span class="range-label"><span>轨道聚合</span><span>空间逸出</span></span></label>
+<label>画幅<select id="format"><option value="portrait">竖版 · 1080 × 1440</option><option value="square">方版 · 1080 × 1080</option></select></label>
+<button id="save" type="button">保存这张卡片 PNG</button><div id="status" class="status" role="status"></div>
+</div>
+<p class="note">当前为合成示例数据，复用产品的用量与使用习惯规则。颜色与混乱程度只改变艺术表达，不代表能力评分。本预览不包含传播二维码。</p>
+<p class="note">第二套进阶 · <a href="tokenme-share-v0.2-cyber.html">对比上一版</a> · <a href="tokenme-share-v0.1.html">第一套</a></p></aside>
+</section></main>
+<script src="../../token_footprint/share-card.js"></script>
+<script src="tokenme-share-v0.2-cyber-bold.js"></script>
+</html>

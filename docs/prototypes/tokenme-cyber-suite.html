@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TokenMe · 混沌涌现完整套系</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#090b12;color:#eef0ff;font:14px/1.65 "Segoe UI","Microsoft YaHei",sans-serif}main{max-width:1280px;margin:auto;padding:28px 32px 60px}header{display:flex;justify-content:space-between;gap:18px;border-bottom:1px solid #292d42;padding-bottom:18px}header b{font-size:24px;letter-spacing:-1px}.muted,p{color:#96a4c0}h1{font-size:46px;font-weight:500;letter-spacing:-2px;margin:28px 0 8px}h2{font-size:22px;font-weight:500;margin:0 0 10px}.intro{display:flex;justify-content:space-between;align-items:center;gap:30px}.intro p{max-width:550px;margin-bottom:24px}.kicker{font-size:11px;letter-spacing:2px;color:#b1a2ff}.gallery{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin:20px 0 42px}.tile{background:#101420;border:1px solid #30374c;padding:8px;cursor:pointer;text-align:left;color:#e8edff;border-radius:9px;font:inherit}.tile[aria-pressed=true]{border-color:#ae94ff;box-shadow:0 0 0 1px #ae94ff}.tile canvas{width:100%;height:auto;display:block}.tile strong,.tile small{display:block;padding:4px 5px}.tile small{font-size:11px;color:#8e9cbb}.workspace{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:60px;border-top:1px solid #292d42;padding-top:32px}.stage{display:flex;justify-content:center;align-items:flex-start}#card{display:block;width:min(100%,540px);height:auto;border:1px solid #31364b;box-shadow:0 20px 60px #0005}aside{min-width:0}label{display:block;color:#bdc8e0;font-size:12px;margin:0 0 15px}select,input[type=text],button.action{display:block;width:100%;min-height:44px;margin-top:5px;border:1px solid #38405b;background:#141a29;color:#e8edff;padding:10px 12px;border-radius:7px;font:inherit}input[type=range]{width:100%;accent-color:#b59dff}.check{display:flex;align-items:center;gap:8px}.check input{accent-color:#b59dff}button{cursor:pointer}button.action.primary{background:#d9d0ff;color:#211a38;font-weight:600}button:disabled{opacity:.4;cursor:default}output{float:right}small,.fine{font-size:12px;color:#8e9cbb}.status{min-height:23px;color:#bfb3ff;font-size:12px}.rules{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:44px;padding-top:24px;border-top:1px solid #292d42}.rules p{font-size:12px}a{color:#c0b2ff}button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{outline:2px solid #6df4e7;outline-offset:4px}@media(max-width:850px){main{padding:20px}.workspace{grid-template-columns:1fr;gap:28px}aside{max-width:540px;width:100%;margin:auto}.gallery{gap:7px}.tile{padding:3px}.tile small{display:none}.tile strong{font-size:11px;padding:4px 0}.intro{display:block}.rules{grid-template-columns:1fr;gap:10px}h1{font-size:36px}}@media(max-width:430px){.gallery{grid-template-columns:repeat(3,1fr)}header span{font-size:11px;text-align:right;max-width:150px}}
+</style>
+<main><header><b>TokenMe</b><span class="muted">AI FOOTPRINT / CYBER COLLECTION</span></header>
+<div class="intro"><div><h1>混沌涌现</h1><div class="kicker">FROM A SINGLE THREAD TO A COMPLETE FIELD.</div></div><p>单核 → 双轨 → 多层 → 裂隙 → 全域。等级通过结构、层数和空间范围递进，颜色辅助识别。自由的轨迹从一束光发展成完整的高维场。</p></div>
+<div id="gallery" class="gallery" role="group" aria-label="五档视觉主题"></div>
+<section class="workspace"><div class="stage"><canvas id="card" width="1080" height="1440" role="img" aria-label="卡片预览"></canvas></div><aside>
+<h2 id="theme-title">L3 · 交织</h2><p id="theme-description" class="fine"></p>
+<label>昵称<input id="nickname" type="text" maxlength="60" value="我的 AI 足迹"></label>
+<label>主题等级<select id="tier"><option value="1">L1 · 初光</option><option value="2">L2 · 脉冲</option><option value="3" selected>L3 · 交织</option><option value="4">L4 · 裂变</option><option value="5">L5 · 涌现</option></select></label>
+<label>分享内容<select id="period"><option value="all">累计档案</option><option value="2026-10">2026.10 · 月度纪念</option></select></label>
+<label>画幅<select id="format"><option value="portrait">竖版 · 1080 × 1440</option><option value="square">方版 · 1080 × 1080</option></select></label>
+<label>记录状态<select id="scenario"><option value="sustained">持续使用者 · 分散在最近四周</option><option value="growing">正在积累记录 · 三个活跃日</option><option value="initial">初次探索 · 一个活跃日</option><option value="unconnected">未接入 · 状态示意</option><option value="zero">已接入零用量 · 状态示意</option><option value="empty">当月无记录 · 状态示意</option></select></label>
+<label>混乱程度<output id="amount">82%</output><input id="chaos" type="range" min="0" max="100" value="82"></label>
+<label class="check"><input id="qr" type="checkbox" checked>附上「生成我的」二维码</label>
+<label class="check"><input id="grayscale" type="checkbox">灰度检查（仅预览，导出保留颜色）</label>
+<button class="action primary" id="save">保存当前卡片 PNG</button>
+<button class="action" id="overview">保存五档总览 PNG</button>
+<div class="status" id="status" role="status"></div>
+<p class="fine">全部为合成示例数据。切换等级会更换示例累计量；月度卡只显示当月量，等级仍由累计量决定。</p>
+<p class="fine">二维码复用产品入口，仅指向公开 TokenMe 项目，不携带个人数据。未接入与无有效记录时禁用分享导出。</p>
+</aside></section>
+<section class="rules"><div><h2>01 / 用量与习惯</h2><p>1 I = 100万原生 Token。等级门槛沿用 L1–L5；初光到涌现是本套视觉名称。使用习惯独立计算，等级不代表能力、成果或信用。</p></div><div><h2>02 / 从光束到完整场</h2><p>低等级保留完整的单核设计；随后依次增加第二轨道、多层核心、分离轨道与外围场。灰度检查用于比较轮廓与层次，使用节奏仍影响局部轨迹。</p></div><div><h2>03 / 交付与对照</h2><p>两种画幅分别排版，预览与 PNG 导出共用画布。含累计、月度、二维码开关及空状态设计。<a href="tokenme-share-v0.2-cyber-bold.html">查看已确认的探索稿</a></p></div></section>
+</main>
+<script src="../../token_footprint/share-card.js"></script>
+<script src="../../token_footprint/share-cyber.js"></script>
+<script src="tokenme-cyber-demo.js"></script>
+<script src="tokenme-cyber-suite.js"></script>
+</html>

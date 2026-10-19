@@ -18,7 +18,7 @@ def main(argv=None):
     parser.add_argument("--check", action="store_true", help="Print installation plan without changing files")
     parser.add_argument("--run", action="store_true", help="Scan local usage after installation")
     parser.add_argument("--open", action="store_true", help="Open report after --run")
-    parser.add_argument("--sources", default="codex,workbuddy", choices=("codex,workbuddy", "codex", "workbuddy", "none"))
+    parser.add_argument("--sources", default="all", help="all, none, or comma-separated native source names")
     args = parser.parse_args(argv)
     root = Path(__file__).resolve().parents[1]
     version = next(ast.literal_eval(n.value) for n in ast.parse((root / "token_footprint/__init__.py").read_text(encoding="utf-8")).body
@@ -34,6 +34,9 @@ def main(argv=None):
             raise ValueError("Python 3.10 or newer is required")
         if args.open and not args.run:
             raise ValueError("--open requires --run")
+        selected = set(args.sources.split(","))
+        if selected not in ({"all"}, {"none"}) and not selected <= {"codex", "workbuddy", "claude", "pi", "gemini", "opencode", "qwen", "kimi"}:
+            raise ValueError("Unsupported --sources; use all, none or native source names")
         if args.wheel:
             with zipfile.ZipFile(args.wheel) as wheel:
                 metadata = [n for n in wheel.namelist() if n.endswith('.dist-info/METADATA')]

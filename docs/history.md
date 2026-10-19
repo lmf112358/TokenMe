@@ -9,6 +9,7 @@
 - Codex：timestamp + cumulative counters 指纹，对保留原时间戳的重放去重。同 ID 请求增量计数冲突时中止。被重写时间戳的历史仍可能重复；跨设备/账号自动对账尚不支持。
 - WorkBuddy：trace ID 指纹。结束时间较新的快照替代旧值，较旧快照忽略；同结束时间的新观测可作为修订。
 - ccusage：source + day 指纹。重新导入替代整个桶，不相加；最后导入是权威版本，用户需保证完整性。
+- Tokscale graph：带导入标记的 source + day 指纹；按平台合并模型后替换整日桶。与 ccusage/原生采集同平台互斥，备份恢复和临时扫描也检查。零值修订保留账本记录但不计活跃日；详见 [Tokscale 导入](tokscale-import.md)。
 - native 与 daily_bucket 不能覆盖同一 source，检查包含已有历史与本次输入。
 - `--sources` 选择要更新的 collector，报告仍读取全库；日志消失不会删除历史。
 

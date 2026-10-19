@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "token-footprint-local"
-version = "0.2.0.dev1"
+version = "0.2.0.dev4"
 description = "Local-first personal AI usage accounting and share cards"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -21,7 +21,7 @@ Homepage = "https://github.com/lmf112358/TokenMe"
 Issues = "https://github.com/lmf112358/TokenMe/issues"
 
 [tool.setuptools.package-data]
-token_footprint = ["report.html", "share-card.js", "share-qr.json"]
+token_footprint = ["report.html", "share-card.js", "share-cyber.js", "share-qr.json"]
 
 [tool.setuptools.packages.find]
 include = ["token_footprint*"]

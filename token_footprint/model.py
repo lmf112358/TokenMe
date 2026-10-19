@@ -13,6 +13,29 @@ class UsageError(ValueError):
     pass
 
 
+def source_family(source):
+    """Aliases share an accounting scope, even in old imported ledgers."""
+    if source.startswith("cc-mirror/"):
+        return "claude"
+    return {"claude-code": "claude", "claude_code": "claude", "codex-cli": "codex",
+            "gemini-cli": "gemini", "qwen-code": "qwen", "kimi-code": "kimi",
+            "pi-agent": "pi"}.get(source, source)
+
+
+def validate_source_scopes(records):
+    """A source must have one accounting authority across scans and backups."""
+    kinds, labels = defaultdict(set), defaultdict(set)
+    for record in records:
+        scope = source_family(record.source)
+        labels[scope].add(record.source)
+        kind = ("tokscale" if record.record_id.startswith("tokscale-graph-v1:") else "daily") if record.granularity == "daily_bucket" else "native"
+        kinds[scope].add(kind)
+    if any(len(names) > 1 for names in labels.values()):
+        raise UsageError("history source aliases overlap; reconcile the existing source names before importing")
+    if any(len(values) > 1 for values in kinds.values()):
+        raise UsageError("overlapping native / ccusage / Tokscale sources; filter import clients or use a separate --store")
+
+
 def count(value, name="tokens", optional=False):
     if value is None and optional:
         return None
@@ -141,7 +164,8 @@ def aggregate(records, *, offset="+08:00", month=None):
 
     daily, sources, models = defaultdict(list), defaultdict(list), defaultdict(list)
     for day, record in selected:
-        daily[day].append(record)
+        if record.total_tokens > 0:
+            daily[day].append(record)
         sources[record.source].append(record)
         models[(record.source, record.model)].append(record)
     result = totals([record for _, record in selected])

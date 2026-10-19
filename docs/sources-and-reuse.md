@@ -39,6 +39,26 @@ ccusage 桥接遵循 [2026-10-10 查阅的 unified daily JSON 文档](https://cc
 
 ## 验证范围
 
+### 多平台扩展复用评估（2026-10-13）
+
+- 现有 `normalize_usage`、`UsageRecord`、SQLite 事务、诊断与历史去重继续复用。新增解析使用标准库 `json/csv/sqlite3`，没有引入运行依赖或复制第三方实现。
+- [Tokscale](https://github.com/junhoyeo/tokscale)，本轮固定查阅 commit `bd62b8c4e07269e5314fac06c6d23262dc714633`（MIT）：覆盖广、持续维护，含 Rust 核心与 Node/Bun CLI。其 scope 包含登录、凭据恢复、缓存同步、计价、公开排名，直接嵌入的依赖与安全审查成本明显超过当前离线读取需求。只用其 Cursor CSV/TRAE cache 字段合同作为格式参考，独立编写严格解析器；不执行仓库脚本或登录流程。未完成其完整漏洞/依赖审计，不声称其安全已验证。
+- [ccusage](https://github.com/ccusage/ccusage)（MIT）：保留现有文件桥接，不自动安装或追随 latest；各版本输出需按合同验证。新原生源与其同义 agent 名称发生重叠时拒绝合并。
+- [Claude Code monitoring](https://code.claude.com/docs/en/monitoring-usage)：本地会话与 API usage、缓存排除于 input 的合同；另以本机 JSONL 样本核实结构，不导出正文。
+- [Pi 消息合同](https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/message-types.md)：input/output/cacheRead/cacheWrite、reasoning 子集、toolResult usage；[session 合同](https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/session-format.md)用于分支与摘要记录。
+- [Gemini 记录器](https://github.com/google-gemini/gemini-cli/blob/main/packages/core/src/services/chatRecordingService.ts)、[Qwen 记录器](https://github.com/QwenLM/qwen-code/blob/main/packages/core/src/services/chatRecordingService.ts)：chat JSON/JSONL 与 usageMetadata 字段；未知 tool 用量合同保守跳过。
+- [OpenCode getUsage](https://github.com/anomalyco/opencode/blob/dev/packages/opencode/src/session/session.ts)：持久化 output 排除了 reasoning，input 排除了缓存，因此归一时补回相应子集。数据库为只读，兼容旧 JSON。
+- [Cursor analytics](https://cursor.com/docs/account/teams/analytics)：导出入口与权限边界。具体 CSV 合同参考固定 Tokscale schema；尚缺真实个人导出样本。
+- [TRAE 企业个人用量](https://docs.trae.cn/enterprise_check-individual-usage)：CN 企业导出与国际版 cache 区分；[优惠用量说明](https://docs.trae.cn/enterprise_half-price-campaign-for-trae-built-in-models)说明不能把折后用量当原始 Token。
+- [Qoder CLI](https://docs.qoder.com/cli/commands)、[Qoder usage API](https://docs.qoder.com/account/teams/openapi/usage)：文档提及 Token，但所查事件示例与字段主要为 Credits，当前没有将它换算进账本。
+- [豆包会员说明](https://www.doubao.com/legal/ey01)：次数/时长展示不构成原始 Token 导出合同。
+
+以上来源用于字段与范围核对，不代表全部客户端版本经过真实验证。可读性、许可证和维护范围已评估；未采用外部运行代码，因此不增加第三方运行许可证负担。后续决定集成外部采集器时仍须重新审查版本、依赖、安全记录与凭据访问。
+
 - 本机实际数据：Codex JSONL、WorkBuddy JSON trace、官方 Codex 账号摘要。
 - 合成数据测试：口径归一、去重、重置、截断、日期过滤、未知值、隐私白名单、ccusage 桥接、HTML 注入。
 - 不包含：所有平台账号、跨设备/跨账号全量对账、服务商签名验证、所有版本日志兼容、借贷/职业能力评级。
+
+### Tokscale 桥接复用（2026-10-14）
+
+沿用已核对的 MIT 仓库 commit `bd62b8c4e07269e5314fac06c6d23262dc714633`，Cargo 工作区版本 4.18.0。核对 CLI graph 的 camelCase 序列化、五桶独立相加和 client ID 定义。采用统一文件桥接，复用上游采集成果；独立实现 Python 标准库解析与 TokenMe 现有日桶事务，不嵌入 Rust/Node 栈，不执行下载源码或登录流程。依赖规模保持不变，后续可替换或停用桥接，不声称完成上游完整安全审计。具体固定来源、输入范围和验证限制见 [Tokscale 导入](tokscale-import.md)。

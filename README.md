@@ -4,7 +4,7 @@
 
 **v0.2 开发预览 · 本地保存 · 离线报告 · 零第三方运行依赖**
 
-本分支版本为 `0.2.0.dev1`，稳定版仍为 [v0.1.0](https://github.com/lmf112358/TokenMe/releases/tag/v0.1.0)。v0.2 增加 Agent 安装与 JSON 调用、可解释的记录变化、历史快照、完整备份和月度纪念图。参阅 [v0.2 范围与立意](docs/v0.2.md)。
+本分支版本为 `0.2.0.dev4`，稳定版仍为 [v0.1.0](https://github.com/lmf112358/TokenMe/releases/tag/v0.1.0)。v0.2 增加 Agent 安装与 JSON 调用、可解释的记录变化、历史快照、完整备份、月度纪念图和 Tokscale 多平台导入。分享卡默认使用“混沌涌现”，可切换材质经典。参阅 [v0.2 范围与立意](docs/v0.2.md) 与 [项目进度和发布缺口](docs/project-status-2026-10-19.md)。
 
 当前开发检出可一条命令安装并生成报告（需要 Python 3.10+）：
 
@@ -14,11 +14,20 @@ python scripts/bootstrap.py --run --open
 
 Agent 接入说明见 [agent-quickstart](docs/agent-quickstart.md)。安装器使用隔离环境；`run` 的报告固定保存在 `~/.tokenme/report`。以下原有 `scan` 流程继续兼容，默认输出仍是工作目录的 `.local/report`。
 
-支持 Codex、WorkBuddy 本地记录和 ccusage 导出桥接。累计 I 量、五种材质、个人使用节奏纹样、两种画幅与可关闭的传播二维码已经可用。低用量也有完整的设计。
+支持 Codex、WorkBuddy、Claude Code、Pi、Gemini CLI、OpenCode、Qwen Code、Kimi Code 的指定本地格式，以及 Cursor CSV、TRAE 国际版 JSON 和 ccusage 导入。各来源的实测范围与限制见 [平台覆盖](docs/platform-coverage.md)，待扩充项见 [缺陷清单](docs/platform-gaps.md)。累计 I 量、五档空间等级、个人使用节奏纹样、两种画幅与可关闭的传播二维码已经可用。低用量也有完整的设计。
 
-<img src="docs/assets/share-demo-l1.png" alt="L1 素棉分享图，使用合成演示数据" width="360">
+<img src="docs/assets/share-demo-cyber.png" alt="L3 交织月度分享图，使用合成演示数据" width="360">
 
 上图为合成演示数据，不包含真实用户记录。
+
+已有 Tokscale 可直接复用其多平台采集结果：
+
+```shell
+tokscale graph --output usage.json
+python -m token_footprint run --sources none --tokscale usage.json --tokscale-offset +08:00 --out .local/tokscale-report --open
+```
+
+以上要求原导出按固定 UTC+08:00 分日。支持已核对的 Tokscale 4.x graph 格式，保存平台日汇总，不与同平台原生/ccusage 记录相加；可用 `--tokscale-clients` 只补充部分平台。详见 [导入说明与边界](docs/tokscale-import.md)。
 
 ## 开始使用
 
@@ -49,19 +58,27 @@ python -m token_footprint scan --open
 - **传播**：可关闭的「生成我的」二维码，仅指向本仓库，不携带个人数据。
 - **迁移**：白名单 JSONL 导出、恢复、仅用历史库重建报告。
 
-### I 量与材质
+### I 量与视觉等级
 
 **1 I = 1,000,000 原生 Token**，仅为用量缩写。分享图使用累计历史，与报告月份独立；等级不按月清零，纠错后重算。
 
-| 等级 | 累计 Token | 材质 |
-|---|---|---|
-| L1 | 大于 0、小于 1000万 | 素棉 |
-| L2 | 1000万至小于 1亿 | 染纸 |
-| L3 | 1亿至小于 10亿 | 珠光 |
-| L4 | 10亿至小于 100亿 | 钛银 |
-| L5 | 100亿及以上 | 墨金 |
+| 等级 | 累计 Token | 混沌涌现（默认） | 材质经典 |
+|---|---|---|---|
+| L1 | 大于 0、小于 1000万 | 初光 · 单核 | 素棉 |
+| L2 | 1000万至小于 1亿 | 脉冲 · 双轨 | 染纸 |
+| L3 | 1亿至小于 10亿 | 交织 · 多层 | 珠光 |
+| L4 | 10亿至小于 100亿 | 裂变 · 裂隙 | 钛银 |
+| L5 | 100亿及以上 | 涌现 · 全域 | 墨金 |
 
 没有有效记录时暂不评级。材质不是能力、产出或费用评分；没有真实比较样本时不展示虚构百分位。[设计与历史原型](docs/share-card-design.md) 保留供迭代。
+
+### AI 协作阶段
+
+报告与分享图增加使用习惯判断，每个判断都附上近 30 天活跃日、最近连续有记录的周数、评估截止日期。它与累计用量材质分别计算，不因 Token 数量大而升级。
+
+**TokenMe 使用习惯规则 v1**：近 30 天至少活跃 8 天，且截至评估日的最近四个 7 天区间均有正用量记录，显示“持续使用者”。仅一个活跃日显示“初次探索”；其余未达标、近期无记录或日期资料不足时显示“正在积累记录”。同一天只计一次；“周”是向前划分的 7 天区间，不是自然周。页面可展开查看各区间日期和活跃日。
+
+累计档案按报告生成日评估；历史月度图按月底评估，当前月按生成日评估，近 30 天可能跨月。修订或补录后重算，阶段随近期记录变化，不是永久勋章。这是公开的产品判断规则，门槛尚未经人群研究校准；只描述已采集的使用习惯，不证明任务完成、能力、成果或全球排名，也不是 Karpathy 的官方评级。未采集的使用不能被判为零使用。
 
 ### 来源与月份
 
@@ -71,7 +88,7 @@ python -m token_footprint scan --sources workbuddy --workbuddy-root "D:/MyWorkBu
 python -m token_footprint scan --codex-root "D:/MyCodex" --offset +08:00
 ```
 
-默认读取用户目录的 `.codex/sessions`、`.codex/archived_sessions`、`.workbuddy/traces`。Codex 默认路径尊重已有 `CODEX_HOME`。`--home` 可指定备份用户目录；程序不修改源日志。
+默认 `--sources all` 读取 8 个已支持的本地来源，目录及环境变量见 [平台覆盖](docs/platform-coverage.md)。Cursor/TRAE 需显式指定导入文件。`--home` 可指定备份用户目录；程序不修改源日志。
 
 `--sources` 只选择本次扫描的来源。**报告包含该历史库全部已保存来源**；`--sources none` 可用于仅导入备份。`--no-history` 只统计本次输入，不读取或保存历史。
 
@@ -123,6 +140,8 @@ python -m token_footprint scan --sources none --ccusage my-ccusage.json --out .l
 ## 数据边界与隐私
 
 总量 = 输入（含缓存）+ 输出（含推理）。缓存与推理是子集，未知字段保留 null。不同分词器的 Token 相加只表示原生数量，不代表等价算力。积分、订阅额度和金额不换算成 Token。
+
+以下保留 v0.1 验证基线；v0.2 新增适配器的实测范围以 [平台覆盖](docs/platform-coverage.md) 为准。
 
 | 入口 | v0.1 状态 |
 |---|---|

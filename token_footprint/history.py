@@ -6,7 +6,7 @@ import json
 from pathlib import Path
 import sqlite3
 
-from .model import UsageError, UsageRecord, aggregate, timestamp, fingerprint
+from .model import UsageError, UsageRecord, aggregate, timestamp, fingerprint, validate_source_scopes
 
 
 def record_from_dict(row):
@@ -105,16 +105,11 @@ def merge_history(path, incoming, *, offset, source_status=None):
         stats["before_tokens"] = sum(r.total_tokens for r in existing.values())
         connection.execute("CREATE TABLE IF NOT EXISTS snapshots (id INTEGER PRIMARY KEY, digest TEXT NOT NULL, offset TEXT NOT NULL, payload TEXT NOT NULL)")
         connection.execute("PRAGMA user_version = 2")
-        kinds = {}
-        for r in [*existing.values(), *incoming.values()]:
-            kind = "daily" if r.granularity == "daily_bucket" else "native"
-            kinds.setdefault(r.source, set()).add(kind)
-        if any(len(kinds_) > 1 for kinds_ in kinds.values()):
-            raise UsageError("history contains overlapping native and ccusage sources; use a separate --store")
-        if any("daily" in value for value in kinds.values()):
+        validate_source_scopes([*existing.values(), *incoming.values()])
+        if any(r.granularity == "daily_bucket" for r in [*existing.values(), *incoming.values()]):
             old_offset = connection.execute("SELECT value FROM metadata WHERE key='daily_offset'").fetchone()
             if old_offset and old_offset[0] != offset:
-                raise UsageError("ccusage history requires its original --offset " + old_offset[0])
+                raise UsageError("daily-import history requires its original --offset " + old_offset[0])
             # Imported portable daily records retain the export's offset in their timestamp.
             for r in [*existing.values(), *incoming.values()]:
                 if r.granularity == "daily_bucket" and not r.occurred_at.endswith(offset):

@@ -35,10 +35,25 @@ def main():
         html = (folder / "report/report.html").read_text(encoding="utf-8")
         data = json.loads((folder / "report/report-data.json").read_text(encoding="utf-8"))
         assert "__REPORT_DATA__" not in html and "__SHARE_CARD_SCRIPT__" not in html
+        assert "__CYBER_CARD_SCRIPT__" not in html and "TokenMeCyber" in html
+        assert 'value="cyber"' in html and 'id="card-style"' in html
         assert "TokenMeCard" in html and data["share"]["matrix"]
         assert data["views"]["all"]["total_tokens"] == 0
         run(python, "-m", "token_footprint", "report", "--store", "report/history.sqlite3", "--out", "rebuilt")
         run(python, "-m", "token_footprint", "timeline", "--store", "report/history.sqlite3", "--json")
+        # Exercise the optional bridge from the installed wheel, outside the repo.
+        buckets = dict(input=20, output=10, cacheRead=70, cacheWrite=5, reasoning=4)
+        imported = {"meta": {"version": "4.18.0", "generatedAt": "2026-10-14T00:00:00Z",
+                             "dateRange": {"start": "2026-10-01", "end": "2026-10-01"}},
+                    "summary": {"totalTokens": 109}, "contributions": [{"date": "2026-10-01",
+                    "totals": {"tokens": 109}, "tokenBreakdown": buckets,
+                    "clients": [{"client": "openclaw", "modelId": "fixture", "tokens": buckets}]}]}
+        (folder / "usage.json").write_text(json.dumps(imported), encoding="utf-8")
+        run(python, "-m", "token_footprint", "run", "--sources", "none", "--tokscale", "usage.json",
+            "--tokscale-offset", "+08:00", "--out", "bridge", "--json")
+        bridge = json.loads((folder / "bridge/report-data.json").read_text(encoding="utf-8"))
+        assert bridge["views"]["all"]["total_tokens"] == 109
+        assert next(p for p in bridge["platforms"] if p["source"] == "openclaw")["state"] == "imported_daily"
         install = subprocess.run([sys.executable, str(root / "scripts/bootstrap.py"), "--prefix",
                                   str(folder / "agent install"), "--wheel", str(wheels[0]), "--run", "--sources", "none"],
                                  cwd=folder, env=env, check=True, capture_output=True, text=True)
